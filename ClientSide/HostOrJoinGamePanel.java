@@ -1,9 +1,7 @@
 package ClientSide;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class HostOrJoinGamePanel extends JPanel {
@@ -12,56 +10,56 @@ public class HostOrJoinGamePanel extends JPanel {
     private JButton hostButton;
     private JButton joinButton;
     private JTextField roomCodeField;
+    private JLabel roomCodeLabel;
 
     // Constructor
     public HostOrJoinGamePanel() {
+        setLayout(new BorderLayout());
+
         // Initialize components
         hostButton = new JButton("Host Game");
         joinButton = new JButton("Join Game");
         roomCodeField = new JTextField(10);
+        roomCodeLabel = new JLabel("Enter Room Code:");
 
-        // Add components to panel
-        add(hostButton);
-        add(joinButton);
-        add(roomCodeField);
+        // Panel for buttons and inputs
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(hostButton);
 
-        // Set up button actions
-        hostButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle host button action
-                System.out.println("Host button clicked.");
-                // Further host button logic as needed
-            }
-        });
+        JPanel joinPanel = new JPanel(new FlowLayout());
+        joinPanel.add(roomCodeLabel);
+        joinPanel.add(roomCodeField);
+        joinPanel.add(joinButton);
 
-        joinButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Handle join button action
-                System.out.println("Join button clicked with room code: " + roomCodeField.getText());
-                // Further join button logic as needed
-            }
-        });
+        // Add components to main panel
+        add(buttonPanel, BorderLayout.NORTH);
+        add(joinPanel, BorderLayout.CENTER);
     }
 
     // Methods
-    public void displayRoomCode(String code) {
-        // Display the room code in the roomCodeField
-        roomCodeField.setText(code);
+
+    // Add listeners for host and join buttons
+    public void addHostButtonListener(ActionListener hostListener) {
+        hostButton.addActionListener(hostListener);
     }
 
+    public void addJoinButtonListener(ActionListener joinListener) {
+        joinButton.addActionListener(joinListener);
+    }
+
+    // Get the room code entered by the user
+    public String getRoomCode() {
+        return roomCodeField.getText().trim();
+    }
+
+    // Clear the room code field
     public void clearRoomCode() {
-        // Clear the room code field
         roomCodeField.setText("");
     }
 
+    // Set the panel to join mode with the room code input enabled
     public void setJoinMode() {
-        // Set the panel to "join mode" by enabling/disabling components as needed
-        roomCodeField.setEditable(true);
+        roomCodeField.setEnabled(true);
         joinButton.setEnabled(true);
-        hostButton.setEnabled(false);
-        System.out.println("Join mode activated.");
     }
 }
-

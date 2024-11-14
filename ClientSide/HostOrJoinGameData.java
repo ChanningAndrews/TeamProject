@@ -9,49 +9,36 @@ public class HostOrJoinGameData {
     private String roomCode;
 
     // Constructor
-    public HostOrJoinGameData(boolean isHost) {
-        this.isHost = isHost;
+    public HostOrJoinGameData() {
+        this.isHost = false;
+        this.roomCode = "";
     }
 
     // Methods
-    public void generateRoomCode() {
-        // Generate a random room code
-        roomCode = UUID.randomUUID().toString().substring(0, 8); // Generates an 8-character room code
-        System.out.println("Generated room code: " + roomCode);
+
+    // Set host status
+    public void setHost(boolean isHost) {
+        this.isHost = isHost;
     }
 
-    public void startSession() {
-        if (isHost) {
-            generateRoomCode();
-            System.out.println("Starting session as host with room code: " + roomCode);
-            // Additional logic to start the session as host
-        } else {
-            System.out.println("Cannot start session. This client is not the host.");
-        }
-    }
-
-    public void joinSession(String roomCode) {
-        if (!isHost) {
-            this.roomCode = roomCode;
-            System.out.println("Joining session with room code: " + roomCode);
-            // Additional logic to join the session with the given room code
-        } else {
-            System.out.println("Cannot join session. This client is the host.");
-        }
-    }
-
-    // Getter for roomCode
-    public String getRoomCode() {
-        return roomCode;
-    }
-
-    // Getter and setter for isHost
+    // Check if the player is the host
     public boolean isHost() {
         return isHost;
     }
 
-    public void setHost(boolean isHost) {
-        this.isHost = isHost;
+    // Generate a unique room code for hosting a game
+    public String generateRoomCode() {
+        this.roomCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase(); // Generates a short unique code
+        return roomCode;
+    }
+
+    // Get the room code
+    public String getRoomCode() {
+        return roomCode;
+    }
+
+    // Set the room code (used when joining a game)
+    public void setRoomCode(String roomCode) {
+        this.roomCode = roomCode;
     }
 }
-

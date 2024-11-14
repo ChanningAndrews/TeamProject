@@ -27,11 +27,11 @@ public class GameServer {
         return database.validateCredentials(username, password);
     }
 
+    // Assuming GameServer has access to DatabaseFile and User classes
     public boolean userCreateAccount(String username, String password) {
-        // Logic to create a new account in the database
-        System.out.println("Creating account for user: " + username);
-        // Assume the database has a method to add a new user
-        return database.addUser(username, password);
+        // Create a new User object with initial values for gamesPlayed and gamesWon
+        User newUser = new User(username, password, 0, 0);
+        return database.addUser(newUser);  // Pass the User object to addUser
     }
 
     public void startListening(int port) {

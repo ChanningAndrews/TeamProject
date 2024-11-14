@@ -1,42 +1,69 @@
 package ClientSide;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LobbyData {
 
+    // Inner Player class to store each player's name and ready status
+    public static class Player {
+        private String name;
+        private boolean ready;
+
+        public Player(String name) {
+            this.name = name;
+            this.ready = false;
+        }
+
+        public String getUsername() {
+            return name;
+        }
+
+        public boolean isReady() {
+            return ready;
+        }
+
+        public void setReady(boolean ready) {
+            this.ready = ready;
+        }
+    }
+
     // Fields
-    private Map<String, Boolean> playerNames; // Stores player names and their ready status
-    private boolean isReady;
+    private List<Player> players;
 
     // Constructor
     public LobbyData() {
-        playerNames = new HashMap<>();
-        isReady = false;
+        players = new ArrayList<>();
     }
 
     // Methods
+
+    // Add a player to the lobby
     public void addPlayer(String name) {
-        playerNames.put(name, false); // Adds a player with default ready status as false
+        players.add(new Player(name));
+        System.out.println("Player added to lobby: " + name);
     }
 
+    // Remove a player from the lobby
     public void removePlayer(String name) {
-        playerNames.remove(name);
+        players.removeIf(player -> player.getUsername().equals(name));
+        System.out.println("Player removed from lobby: " + name);
     }
 
-    public void setPlayerStatus(String name, boolean ready) {
-        if (playerNames.containsKey(name)) {
-            playerNames.put(name, ready);
-        }
+    // Set the ready status of a player by name
+    public void setPlayerReadyStatus(String name, boolean ready) {
+        players.stream()
+                .filter(player -> player.getUsername().equals(name))
+                .forEach(player -> player.setReady(ready));
     }
 
-    public boolean areAllPlayersReady() {
-        for (Boolean ready : playerNames.values()) {
-            if (!ready) {
-                return false;
-            }
-        }
-        return true;
+    // Get the list of players
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    // Check if all players are ready
+    public boolean allPlayersReady() {
+        return players.stream().allMatch(Player::isReady);
     }
 }
-

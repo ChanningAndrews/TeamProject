@@ -10,25 +10,31 @@ public class ResultsController {
     public ResultsController(GameClient gameClient, ResultsPanel resultsPanel) {
         this.gameClient = gameClient;
         this.resultsPanel = resultsPanel;
+
+        // Adding an action listener for the exit button
+        resultsPanel.addExitButtonListener(e -> handleExitButton());
     }
 
     // Methods
+
+    // Display the results from ResultsData
     public void displayResults(ResultsData resultsData) {
-        // Logic to display results using the results data
-        System.out.println("Displaying results...");
-        // Implement further logic to update the resultsPanel with resultsData as needed
+        String winner = resultsData.getWinnerUsername();
+        resultsPanel.showWinner(winner);
+        resultsPanel.displayPlayerRankings(resultsData.getPlayerRanks());
+        System.out.println("Displaying results for the game. Winner: " + winner);
     }
 
-    public void handleExitButton() {
-        // Logic to handle the exit button action
-        System.out.println("Exiting results...");
-        // Implement exit logic as needed (e.g., returning to main menu or closing the results panel)
-    }
-
+    // Update rankings, e.g., after a match or when new results come in
     public void updateRankings(ResultsData resultsData) {
-        // Logic to update rankings based on the results data
-        System.out.println("Updating rankings...");
-        // Implement further logic to process and update rankings based on resultsData
+        resultsPanel.displayPlayerRankings(resultsData.getPlayerRanks());
+        System.out.println("Updated player rankings displayed.");
+    }
+
+    // Handle the action of exiting the results screen
+    public void handleExitButton() {
+        System.out.println("Exiting results screen and returning to the main lobby.");
+        // Logic to return to the main lobby or main menu
+        gameClient.returnToLobby();
     }
 }
-

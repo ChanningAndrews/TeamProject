@@ -1,74 +1,127 @@
 package ClientSide;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CreateAccountPanel extends JPanel {
 
     // Fields
-    private EJavaClass avatarSelection; // Placeholder for avatar selection type
+    private JComboBox<String> avatarSelection;  // Example dropdown for avatar selection
     private JLabel creationStatus;
     private JTextField usernameField;
-    private JTextField passwordField;
+    private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField;
     private JButton createAccountButton;
 
     // Constructor
     public CreateAccountPanel() {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
         // Initialize components
-        avatarSelection = new EJavaClass(); // Replace with actual avatar selection component
-        creationStatus = new JLabel();
+        avatarSelection = new JComboBox<>(new String[]{"Avatar 1", "Avatar 2", "Avatar 3"}); // Placeholder avatars
+        creationStatus = new JLabel("", SwingConstants.CENTER);
+        creationStatus.setForeground(Color.RED);
+
         usernameField = new JTextField(15);
-        passwordField = new JTextField(15);
+        passwordField = new JPasswordField(15);
+        confirmPasswordField = new JPasswordField(15);
         createAccountButton = new JButton("Create Account");
 
-        // Add components to panel
-        add(avatarSelection);
-        add(creationStatus);
-        add(usernameField);
-        add(passwordField);
-        add(createAccountButton);
+        // Layout components
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("Username:"), gbc);
 
-        // Set up button action
-        createAccountButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleSubmitButton(usernameField.getText(), passwordField.getText());
-            }
-        });
+        gbc.gridx = 1;
+        add(usernameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel("Password:"), gbc);
+
+        gbc.gridx = 1;
+        add(passwordField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(new JLabel("Confirm Password:"), gbc);
+
+        gbc.gridx = 1;
+        add(confirmPasswordField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(new JLabel("Choose Avatar:"), gbc);
+
+        gbc.gridx = 1;
+        add(avatarSelection, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        add(createAccountButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        add(creationStatus, gbc);
     }
 
-    // Methods
+    // Method to set action listener for create account button
+    public void setCreateAccountAction(ActionListener createAccountAction) {
+        createAccountButton.addActionListener(createAccountAction);
+    }
+
+    // Clear input fields
     public void clearFields() {
         usernameField.setText("");
         passwordField.setText("");
+        confirmPasswordField.setText("");
         creationStatus.setText("");
     }
 
-    public void displayMessage(String message) {
+    // Display a message in the status label
+    public void displayMessage(String message, boolean isError) {
         creationStatus.setText(message);
+        creationStatus.setForeground(isError ? Color.RED : Color.GREEN);
     }
 
-    public boolean comparePasswords(String password, String confirmPassword) {
-        return password != null && password.equals(confirmPassword);
+    // Retrieve user details
+    public String getUsername() {
+        return usernameField.getText();
     }
 
-    public void displayPanel() {
-        clearFields();
-        creationStatus.setText("Please enter your details to create an account.");
+    public String getPassword() {
+        return new String(passwordField.getPassword());
     }
 
-    public void handleSubmitButton(String username, String password) {
-        // Logic to handle the submit button action
-        if (username.isEmpty() || password.isEmpty()) {
-            displayMessage("Username and password cannot be empty.");
-        } else {
-            displayMessage("Account creation in progress...");
-            // Implement further account creation logic as needed
+    public String getConfirmPassword() {
+        return new String(confirmPasswordField.getPassword());
+    }
+
+    public String getSelectedAvatar() {
+        return (String) avatarSelection.getSelectedItem();
+    }
+
+    // Validate input fields
+    public boolean validateFields() {
+        String password = getPassword();
+        String confirmPassword = getConfirmPassword();
+
+        if (getUsername().isEmpty()) {
+            displayMessage("Username cannot be empty.", true);
+            return false;
         }
+        if (password.isEmpty()) {
+            displayMessage("Password cannot be empty.", true);
+            return false;
+        }
+        if (!password.equals(confirmPassword)) {
+            displayMessage("Passwords do not match.", true);
+            return false;
+        }
+        return true;
     }
 }
-

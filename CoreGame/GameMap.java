@@ -1,7 +1,9 @@
 package CoreGame;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameMap {
 
@@ -9,34 +11,92 @@ public class GameMap {
     private int mapHeight;
     private int mapWidth;
     private List<Platform> platforms;
-    private List<CoreGame.Collectable> collectibles;
+    private List<Collectable> collectibles;
+    private TileMap tileMap;      // TileMap instance to manage the tile-based background
+    private Player player;        // Player instance for the game
+    private int[][] mapMatrix;    // Matrix to represent the map layout
 
     // Constructor
-    public GameMap(int mapHeight, int mapWidth) {
+    public GameMap(int mapHeight, int mapWidth, int[][] mapMatrix) throws Exception {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.platforms = new ArrayList<>();
         this.collectibles = new ArrayList<>();
+        this.mapMatrix = mapMatrix;
+
+        // Initialize TileMap with the tileset image path and map matrix
+        this.tileMap = new TileMap("/assets/tileset.png", mapMatrix);
+
+        // Initialize Player with a unique avatarId, position can be set later
+        this.player = new Player(1);  // avatarId of 1 for example
+
+        // Generate platforms and collectibles
+        generateMap();
     }
 
-    // Methods
+    // Add a platform to the map
     public void addPlatform(Platform platform) {
         platforms.add(platform);
-        System.out.println("Platform added at position: " + platform.getPosition());
+        System.out.println("Platform added at position: " + platform.getXPos() + ", " + platform.getYPos());
     }
 
-    public void addCollectible(Collectible collectible) {
+    // Add a collectible to the map
+    public void addCollectible(Collectable collectible) {
         collectibles.add(collectible);
-        System.out.println("Collectible added at position: " + collectible.getPosition());
+        System.out.println("Collectible added at position: " + collectible.getXPos() + ", " + collectible.getYPos());
     }
 
+    // Generate map layout with platforms and collectibles
     public void generateMap() {
-        // Logic to generate or reset the map with initial platforms and collectibles
         System.out.println("Generating map with dimensions: " + mapWidth + " x " + mapHeight);
-        // Implement map generation logic here
+        platforms.clear();
+        collectibles.clear();
+
+        Random rand = new Random();
+
+        // Generate platforms based on random positions or other logic
+        int numPlatforms = 10;  // Number of platforms (example)
+        double scaleFactor = 1.5;  // Example scale factor for platform size
+        for (int i = 0; i < numPlatforms; i++) {
+            int x = rand.nextInt(mapWidth - 100);
+            int y = rand.nextInt(mapHeight - 100);
+            Platform platform = new Platform(x, y, scaleFactor);
+            addPlatform(platform);
+        }
+
+        // Generate collectibles based on random positions or other logic
+        int numCollectibles = 5;  // Number of collectibles (example)
+        for (int i = 0; i < numCollectibles; i++) {
+            int x = rand.nextInt(mapWidth - 100);
+            int y = rand.nextInt(mapHeight - 100);
+            Collectable collectible = new Collectable(x, y, "ScoreBoost");  // Example effect
+            addCollectible(collectible);
+        }
     }
 
-    // Getters for map dimensions
+    // Render the entire map, including tile map, platforms, and collectibles
+    public void renderMap(Graphics g) {
+        // Render the tile map background
+        tileMap.render(g);
+
+        // Render each platform
+        for (Platform platform : platforms) {
+            platform.render(g);
+        }
+
+        // Render each collectible
+        for (Collectable collectible : collectibles) {
+            collectible.render(g);
+        }
+    }
+
+    // Reset and regenerate the map
+    public void resetMap() {
+        System.out.println("Resetting map...");
+        generateMap();
+    }
+
+    // Getters for map dimensions and elements
     public int getMapHeight() {
         return mapHeight;
     }
@@ -44,5 +104,20 @@ public class GameMap {
     public int getMapWidth() {
         return mapWidth;
     }
-}
 
+    public List<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public List<Collectable> getCollectibles() {
+        return collectibles;
+    }
+
+    public TileMap getTileMap() {
+        return tileMap;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+}
