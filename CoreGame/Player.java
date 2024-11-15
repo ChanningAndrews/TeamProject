@@ -151,6 +151,14 @@ public class Player {
         this.characterHeight = playerWidth;
     }
 
+    public void setCharacterWidth(int newCharacterWidth) {
+        this.characterWidth = newCharacterWidth;
+    }
+
+    public void setCharacterHeight(int newCharacterHeight) {
+        this.characterHeight = newCharacterHeight;
+    }
+
     public void setMovingLeft(boolean status) {
         this.movingLeft = status;
     }
@@ -169,6 +177,10 @@ public class Player {
 
     public void setOnPlatform(boolean status) {
         this.onPlatform = status;
+    }
+
+    public void setMoving(boolean status) {
+        this.isMoving = status;
     }
 
     //------------------------Getters-------------------------------------------------------------
@@ -226,5 +238,13 @@ public class Player {
 
     public boolean isOnPlatform() {
         return this.onPlatform;
+    }
+
+    public boolean isMovingLeft() {
+        return this.movingLeft;
+    }
+
+    public boolean isMovingRight() {
+        return this.movingRight;
     }
 }
