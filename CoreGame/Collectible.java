@@ -2,9 +2,10 @@ package CoreGame;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
-public class Collectable {
+public class Collectible {
 
     // Fields
     private int xPos;
@@ -17,7 +18,7 @@ public class Collectable {
     private static Image collectableImage;
 
     // Constructor
-    public Collectable(int xPos, int yPos, String effect) {
+    public Collectible(int xPos, int yPos, String effect) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.effect = effect;
@@ -57,6 +58,11 @@ public class Collectable {
         this.yPos = y;
     }
 
+    public void setPosition(Platform platform){
+        this.xPos = platform.getXPos() + 20;
+        this.yPos = platform.getYPos() - 30;
+    }
+
     public int getXPos() {
         return xPos;
     }
@@ -78,5 +84,15 @@ public class Collectable {
     // Check if collectible is collected
     public boolean isCollected() {
         return collected;
+    }
+
+    //apply effect to one player
+    public void applyEffects(Player player){
+
+    }
+
+    //apply effects to other players/group of players
+    public void applyEffects(ArrayList<Player> players){
+
     }
 }

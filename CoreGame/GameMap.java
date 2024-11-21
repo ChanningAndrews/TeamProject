@@ -18,6 +18,8 @@ public class GameMap {
 
     // Constructor
     public GameMap(int mapHeight, int mapWidth, int[][] mapMatrix) throws Exception {
+        System.out.println("In game map constructor.");
+
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.platforms = new ArrayList<>();
@@ -31,7 +33,7 @@ public class GameMap {
         this.player = new Player(1);  // avatarId of 1 for example
 
         // Generate platforms and collectibles
-        generateMap();
+        //generateMap();
     }
 
     // Add a platform to the map
