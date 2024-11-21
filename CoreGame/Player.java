@@ -25,6 +25,7 @@ public class Player {
     private boolean facingLeft = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
+    private boolean staggered = false;
 
     //--for retrieving the files relevant to the character's rendering--
     private String avatarType = "";
@@ -151,6 +152,9 @@ public class Player {
         this.characterHeight = playerWidth;
     }
 
+    public void setStaggered(boolean status){
+        this.staggered = status;
+    }
     public void setCharacterWidth(int newCharacterWidth) {
         this.characterWidth = newCharacterWidth;
     }
@@ -208,6 +212,8 @@ public class Player {
         return this.avatarId;
     }
 
+    public boolean isStaggered(){return this.staggered;}
+
     public BufferedImage getCurrentPlayerSprite() {
         return this.currentPlayerImage;
     }
@@ -244,7 +250,31 @@ public class Player {
         return this.movingLeft;
     }
 
-    public boolean isMovingRight() {
-        return this.movingRight;
+    public boolean isMovingRight() {return this.movingRight;}
+
+
+    //------------------------Interaction with Server-------------------------------------------------------------
+
+    //this method should only be used by the Player class corresponding to the client
+    public String getPacketForServer(){
+        String packetType = "Player";
+        String delimiter = "#";
+
+        //String currentViewAssetFolder
+        //String currentAnimation
+
+        return packetType + delimiter + this.xPos + delimiter + this.yPos /* + currentViewAssetFolder + delimiter + currentAnimation*/;
+    }
+
+    //this method should only be used on a client's "other players" class.
+    public void receivePacketFromServerAndUpdate(String packetFromServer){
+        String[] packetElements = packetFromServer.split("#");
+
+        this.xPos = Integer.parseInt(packetElements[1]);
+        this.yPos = Integer.parseInt(packetElements[2]);
+
+        //more parsing as needed.
+
+
     }
 }

@@ -1,8 +1,24 @@
 package CoreGame;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 public class BoostCollectible extends Collectible {
-    public BoostCollectible(int x, int y, String effect){
-        super(x,y,effect);
+    private static final String BOOST_COLLECTABLE_IMAGE_PATH = "/assets/boost_collectible.png";
+
+
+    public BoostCollectible(int x, int y){
+        super(x,y);
+
+        try {
+            collectibleImage = ImageIO.read(getClass().getResource(BOOST_COLLECTABLE_IMAGE_PATH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override

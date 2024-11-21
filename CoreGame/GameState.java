@@ -12,7 +12,7 @@ public class GameState {
     // Fields
     private List<Player> players;
     private List<Platform> platforms;
-    private List<Collectable> collectibles;
+    private List<Collectible> collectibles;
     private String currentPlayers;
     private boolean gameInProgress;
     private boolean gameWon;
@@ -46,7 +46,7 @@ public class GameState {
         // Add collectible data
         List<Map<String, Object>> collectibleDataList = new ArrayList<>();
         for (int i = 0; i < collectibles.size(); i++) {
-            Collectable collectible = collectibles.get(i);
+            Collectible collectible = collectibles.get(i);
             Map<String, Object> collectibleData = new HashMap<>();
             collectibleData.put("id", i);
             collectibleData.put("x", collectible.getXPos());
@@ -87,7 +87,7 @@ public class GameState {
     }
 
     // Add a collectible to the game state
-    public void addCollectible(Collectable collectible) {
+    public void addCollectible(Collectible collectible) {
         collectibles.add(collectible);
     }
 
@@ -161,7 +161,7 @@ public class GameState {
             if (player.getYPos() + player.getCharacterHeight() > collectible.getYPos()
                     && player.getXPos() + player.getCharacterWidth() > collectible.getXPos()
                     && player.getXPos() < collectible.getXPos() + 20) {
-                System.out.println(User.getUsername() + " collected a " + collectible.getEffect());
+                System.out.println(User.getUsername() + " collected a " + collectible.getType());
                 return true; // Remove collectible if collected
             }
             return false;
@@ -201,7 +201,7 @@ public class GameState {
         return platforms;
     }
 
-    public List<Collectable> getCollectibles() {
+    public List<Collectible> getCollectibles() {
         return collectibles;
     }
 }

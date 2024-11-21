@@ -1,6 +1,6 @@
 package ClientSide;
 
-import CoreGame.Collectable;
+import CoreGame.Collectible;
 import CoreGame.GameMap;
 import CoreGame.GameView;
 import CoreGame.SinglePlayerTesting;
@@ -98,11 +98,11 @@ public class GameController {
 
         // Helper method to update collectibles based on server response
         private void updateCollectibles(List<Map<String, Object>> collectiblesData) {
-            List<Collectable> collectibles = gameMap.getCollectibles();
+            List<Collectible> collectibles = gameMap.getCollectibles();
             for (Map<String, Object> data : collectiblesData) {
                 int id = (Integer) data.get("id");
                 boolean collected = (Boolean) data.get("collected");
-                Collectable collectible = collectibles.get(id);
+                Collectible collectible = collectibles.get(id);
                 collectible.setCollected(collected);
             }
         }

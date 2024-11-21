@@ -11,7 +11,7 @@ public class GameMap {
     private int mapHeight;
     private int mapWidth;
     private List<Platform> platforms;
-    private List<Collectable> collectibles;
+    private List<Collectible> collectibles;
     private TileMap tileMap;      // TileMap instance to manage the tile-based background
     private Player player;        // Player instance for the game
     private int[][] mapMatrix;    // Matrix to represent the map layout
@@ -43,7 +43,7 @@ public class GameMap {
     }
 
     // Add a collectible to the map
-    public void addCollectible(Collectable collectible) {
+    public void addCollectible(Collectible collectible) {
         collectibles.add(collectible);
         System.out.println("Collectible added at position: " + collectible.getXPos() + ", " + collectible.getYPos());
     }
@@ -71,7 +71,7 @@ public class GameMap {
         for (int i = 0; i < numCollectibles; i++) {
             int x = rand.nextInt(mapWidth - 100);
             int y = rand.nextInt(mapHeight - 100);
-            Collectable collectible = new Collectable(x, y, "ScoreBoost");  // Example effect
+            Collectible collectible = new Collectible(x, y);  // Example effect
             addCollectible(collectible);
         }
     }
@@ -87,7 +87,7 @@ public class GameMap {
         }
 
         // Render each collectible
-        for (Collectable collectible : collectibles) {
+        for (Collectible collectible : collectibles) {
             collectible.render(g);
         }
     }
@@ -111,7 +111,7 @@ public class GameMap {
         return platforms;
     }
 
-    public List<Collectable> getCollectibles() {
+    public List<Collectible> getCollectibles() {
         return collectibles;
     }
 

@@ -9,9 +9,12 @@ public class Platform {
     private int xPos, yPos; // Position of the platform
     private int width = 48, height = 10; // Dimensions of the platform
 
-    private static final String PLATFORM_IMAGE_PATH = "assets/platform.png";
+    private static final String PLATFORM_IMAGE_PATH = "/assets/platform.png";
     private static BufferedImage platformImage = null;
     private static boolean imageRead = false;
+
+    private boolean isDisappearing;
+    private boolean hasSpikes;
 
     public Platform(int xPos, int yPos, double scaleFactor) {
         if (!imageRead) {
