@@ -2,6 +2,7 @@ package CoreGame;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
@@ -10,24 +11,19 @@ public class Collectible {
     // Fields
     private int xPos;
     private int yPos;
-    private String effect;
     private int width = 20;  // Default width for collectible
-    private int height = 20; // Default height for collectible
+    private int height = 20;// Default height for collectible
+    private String type;
     private boolean collected;  // New field to track if the collectible is collected
-    private static final String COLLECTABLE_IMAGE_PATH = "/assets/collectable.png";
-    private static Image collectableImage;
+    protected static String COLLECTABLE_IMAGE_PATH = "";
+    //protected static Image collectableImage;
+    protected  BufferedImage collectibleImage = null;
 
     // Constructor
-    public Collectible(int xPos, int yPos, String effect) {
+    public Collectible(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.effect = effect;
         this.collected = false; // Initialize as not collected
-
-        // Load collectible image if not already loaded
-        if (collectableImage == null) {
-            collectableImage = new ImageIcon(getClass().getResource(COLLECTABLE_IMAGE_PATH)).getImage();
-        }
     }
 
     // Method to get the collectible's position
@@ -38,8 +34,8 @@ public class Collectible {
     // Method to render the collectible
     public void render(Graphics g) {
         if (!collected) {  // Only render if not collected
-            if (collectableImage != null) {
-                g.drawImage(collectableImage, xPos, yPos, width, height, null);
+            if (collectibleImage != null) {
+                g.drawImage(collectibleImage, xPos, yPos, width, height, null);
             } else {
                 // Draw a default circle if image loading fails
                 g.setColor(java.awt.Color.YELLOW);
@@ -48,10 +44,6 @@ public class Collectible {
         }
     }
 
-    // Getters and Setters
-    public String getEffect() {
-        return effect;
-    }
 
     public void setPosition(int x, int y) {
         this.xPos = x;
@@ -72,8 +64,16 @@ public class Collectible {
     }
 
     // For identifying collectible type or effect name
-    public String getName() {
-        return effect != null ? effect : "Collectable";
+    public String getType() {
+        return type != null ? type : "Collectable";
+    }
+
+    public int getWidth(){
+        return this.width;
+    }
+
+    public int getHeight(){
+        return this.height;
     }
 
     // Set collected status
