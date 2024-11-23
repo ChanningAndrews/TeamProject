@@ -534,7 +534,7 @@ public class GameClient extends AbstractClient {
             }
 
             // Create and return the Collectible object
-            Collectible collectible = new Collectible(xPos, yPos);
+            Collectible collectible = new BoostCollectible(xPos, yPos);
             collectible.setWidth(width);
             collectible.setHeight(height);
             collectible.setType(type);
@@ -549,7 +549,7 @@ public class GameClient extends AbstractClient {
 
 
     public static void main(String[] args) {
-        GameClient client = new GameClient("localhost", 12345); // Adjust host/port as needed
+        GameClient client = new GameClient("10.251.147.172", 12345); // Adjust host/port as needed
         try {
             client.openConnection();
             client.createMap();

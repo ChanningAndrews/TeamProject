@@ -136,6 +136,7 @@ public class GameServer extends AbstractServer {
         for (Collectible collectible : collectibles){
             collectibleString = collectible.toString();
             try {
+                System.out.println("Sending collectible to client: " + collectibleString);
                 client.sendToClient(collectibleString);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -145,7 +146,7 @@ public class GameServer extends AbstractServer {
     }
 
     public void serverStarted() {
-        System.out.println("Server started");
+        System.out.println("Server started on port " + this.getPort());
     }
 
     private void sendUpdateToClients() {
@@ -237,6 +238,7 @@ public class GameServer extends AbstractServer {
 
 
 
+        /*
         if (msg instanceof Player) {
             Player tempPlayer = (Player)msg;
             //System.out.println("Client " + client.getId() + " moved");
@@ -301,7 +303,11 @@ public class GameServer extends AbstractServer {
             }
 
 
+
+
         }
+
+         */
 
 
         if(msg.equals("message")) {
@@ -415,7 +421,7 @@ public class GameServer extends AbstractServer {
         int rowPos = playerStartingYPos - baseJumpVal;
 
         int firstTowerWallXPos = 4 * 24;
-        int secondTowerWallXPos = (24 - 4) * 24;
+        int secondTowerWallXPos = (45 - 4) * 24;
 
         int towerWidth = secondTowerWallXPos - firstTowerWallXPos;
 
@@ -487,58 +493,97 @@ public class GameServer extends AbstractServer {
 
         System.out.println("Server generated collectibles: " + collectibles);
         System.out.println("Server generated platforms: " + platforms);
+        System.out.println("Number of platforms: " + platforms.size());
         System.out.println("Server generated spikes: " + spikes);
     }
 
-    public String serializeGameData() {
-        StringBuilder builder = new StringBuilder();
 
-        // Serialize collectibles
-        builder.append("COLLECTIBLES:");
-        for (Collectible collectible : collectibles) {
-            builder.append(serializeCollectible(collectible)).append(",");
-        }
-        if (!collectibles.isEmpty()) {
-            builder.setLength(builder.length() - 1); // Remove trailing comma
-        }
-        builder.append("|");
 
-        // Serialize platforms
-        builder.append("PLATFORMS:");
-        for (Platform platform : platforms) {
-            builder.append(serializePlatform(platform)).append(",");
-        }
-        if (!platforms.isEmpty()) {
-            builder.setLength(builder.length() - 1); // Remove trailing comma
-        }
-        builder.append("|");
+    /*
 
-        // Serialize spikes
-        builder.append("SPIKES:");
-        for (Obstacle spike : spikes) {
-            builder.append(serializeObstacle(spike)).append(",");
-        }
-        if (!spikes.isEmpty()) {
-            builder.setLength(builder.length() - 1); // Remove trailing comma
+    public void generatePlatformsAndTraps(int mapWidth, int platformXStartPos, int playerStartingYPos, int baseJumpVal, int platformWidth, int platformHeight, ArrayList<Platform> platformsContainer) {
+        Platform lastPlatform = new Platform(panelWidth/2, myPlayer.getCharacterHeight(), scaleFactor);
+
+        int rowPos = playerStartingYPos - baseJumpVal;
+
+        int firstTowerWallXPos = 4 * tileMap.getTileWidth();
+        int secondTowerWallXPos = (tileMap.getMapWidth() - 4) * tileMap.getTileWidth();
+
+        int towerWidth = secondTowerWallXPos - firstTowerWallXPos;
+
+        int horizontalGap = 120;
+        int currPlatformXPos = platformXStartPos;
+
+        int numPlatformsPerRow = towerWidth / (platformWidth + horizontalGap);
+
+        boolean startDecider = true;
+
+        Random random = new Random();
+        int spikePlacement = 0;
+
+        int spikeDecider = 0;
+
+        boolean hasSpikes = false;
+
+        int collectibleDecider = 2;
+
+        boolean collectibleOnTop = false;
+
+        while(rowPos - platformHeight > lastPlatform.getYPos()) {
+            for(int i = 0; i < numPlatformsPerRow; i++) {
+                platformsContainer.add(new Platform(currPlatformXPos, rowPos, scaleFactor));
+                spikeDecider = random.nextInt(4);
+                //spikeDecider = 4;
+
+                if(spikeDecider == 0){
+                    hasSpikes = true;
+                }
+                else{
+                    hasSpikes = false;
+                    collectibleDecider = random.nextInt(8);
+                }
+
+                if(!hasSpikes && collectibleDecider == 0){
+                    collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
+                }
+
+                if(hasSpikes){
+                    spikePlacement = random.nextInt(3);
+                    //spikePlacement = 1;
+                    spikes.add(new Obstacle(currPlatformXPos + (spikePlacement * 24), rowPos-24, "spikes", scaleFactor));
+                }
+                else{
+
+                }
+
+                currPlatformXPos += (platformWidth +horizontalGap);
+            }
+
+            rowPos -= (myPlayer.getCharacterHeight()+baseJumpVal-25);
+            startDecider = !startDecider;
+
+            if(startDecider) {
+                currPlatformXPos = platformXStartPos;
+                numPlatformsPerRow += 1;
+            }
+            else {
+                currPlatformXPos = platformXStartPos + platformWidth + 30;
+                numPlatformsPerRow--;
+            }
+
+            collectibleDecider = -12;
+
         }
 
-        return builder.toString();
+        System.out.println("Client generated collectibles: " + collectibles);
+        System.out.println("Client generated platforms: " + platforms);
+        System.out.println("Client generated spikes: " + spikes);
+
+        platforms.add(lastPlatform);
     }
 
-    // Helper methods for serializing individual objects
-    private String serializeCollectible(Collectible collectible) {
-        return collectible.getXPos() + "," + collectible.getYPos() + "," + collectible.getType(); // Adjust fields as necessary
-    }
 
-    private String serializePlatform(Platform platform) {
-        return platform.getXPos() + "," + platform.getYPos(); // Adjust fields as necessary
-    }
-
-    private String serializeObstacle(Obstacle obstacle) {
-        return obstacle.getXPos() + "," + obstacle.getYPos() + "," + obstacle.getType(); // Adjust fields as necessary
-    }
-
-
+     */
 
 
 

@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 public class TwoPlayerTesting extends JPanel implements ActionListener {
@@ -192,11 +193,11 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
         });
 
 
-        System.out.println(getPanelWidth());
-        System.out.println(getPlayer().getCharacterHeight());
-        System.out.println(getScaleFactor());
-        System.out.println(getTileMap().getTileWidth());
-
+        System.out.println("Panel width: " + getPanelWidth());
+        System.out.println("Character height: " + getPlayer().getCharacterHeight());
+        System.out.println("Scale Factor: " + getScaleFactor());
+        System.out.println("Tile width: " + tileMap.getTileWidth());
+        System.out.println("Map width: " + tileMap.getMapWidth());
 
         setFocusable(true);
 
@@ -490,6 +491,7 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
 
         //check collision with collectibles and see if player is staggered
 
+        /*
         for (Collectible collectible : collectibles)
         {
             if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
@@ -503,9 +505,51 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
                 break;
             }
 
+            for (Player otherPlayer : otherPlayers.values()){
+                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
+                {
+
+                    //collectible.applyEffects(otherPlayer);
+                    collectibles.remove(collectible);
+                    break;
+                }
+            }
+
 
         }
 
+         */
+
+        Iterator<Collectible> iterator = collectibles.iterator();
+        while (iterator.hasNext()) {
+            Collectible collectible = iterator.next();
+            if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                    myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                    myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                    myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
+
+                collectible.applyEffects(myPlayer);
+                iterator.remove(); // Safe removal using the iterator
+                break;
+            }
+
+            for (Player otherPlayer : otherPlayers.values()) {
+                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
+
+                    // collectible.applyEffects(otherPlayer);
+                    iterator.remove(); // Safe removal using the iterator
+                    break;
+                }
+            }
+        }
+
+        /*
         for (Collectible collectible : collectibles)
         {
             for (Player otherPlayer : otherPlayers.values()){
@@ -515,12 +559,14 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
                         otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
                 {
 
-                    collectible.applyEffects(otherPlayer);
+                    //collectible.applyEffects(otherPlayer);
                     collectibles.remove(collectible);
                     break;
                 }
             }
         }
+
+         */
 
         // Check if player is in the air
         if (!myPlayer.isOnPlatform() && y < mapHeight - myPlayer.getCharacterHeight()) {
@@ -543,9 +589,9 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
         }
 
         for (Player otherPlayer : otherPlayers.values()) {
-            if (otherPlayer.getYPos() >= 504)//y >= 504 /*- characterHeight*/) {
+            if (otherPlayer.getYPos() >= (tileMap.getMapHeight()-5)* tileMap.getTileHeight())//y >= 504 /*- characterHeight*/) {
             {
-                otherPlayer.setYPos(504);
+                otherPlayer.setYPos((tileMap.getMapHeight()-5)* tileMap.getTileHeight());
                 otherPlayer.setYSpeed(0);
                 otherPlayer.setInAir(false);
 
@@ -628,9 +674,11 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
             for (Player otherPlayer : otherPlayers.values()) {
                 //System.out.println("Drawing player " + otherPlayer.getId() + " at " + otherPlayer.getPos());
                 if (otherPlayer.isFacingLeft()) {
+                    //System.out.println("Drawing other player at : " + otherPlayer.getPos());
                     //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
                     g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos()/*x*/, otherPlayer.getYPos()/*y*/, otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
                 } else {
+                    //System.out.println("Drawing other player at : " + otherPlayer.getPos());
                     //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
                     g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos() + otherPlayer.getCharacterWidth(), otherPlayer.getYPos(), -otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
                 }
@@ -1180,6 +1228,7 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
     }
 
     public void addCollectible(Collectible collectible){
+        System.out.println("Adding new collectible: " + collectible);
         collectibles.add(collectible);
     }
 

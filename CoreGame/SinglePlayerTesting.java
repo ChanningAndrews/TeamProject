@@ -496,6 +496,7 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
                 if(!hasSpikes && collectibleDecider == 0){
                     collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
+
                 }
 
                 if(hasSpikes){
