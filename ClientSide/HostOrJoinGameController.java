@@ -17,14 +17,14 @@ public class HostOrJoinGameController {
         gameData.setHost(true);
         String roomCode = gameData.generateRoomCode();
         System.out.println("Hosting game with room code: " + roomCode);
-        gameClient.createGame();
+        //gameClient.createGame();
     }
 
     public void handleJoinButtonPressed(String roomCode) {
         gameData.setHost(false);
         gameData.setRoomCode(roomCode);
         System.out.println("Joining game with room code: " + roomCode);
-        gameClient.joinGame(roomCode);
+        //gameClient.joinGame(roomCode);
     }
 
     public void updateRoomCode(String roomCode) {

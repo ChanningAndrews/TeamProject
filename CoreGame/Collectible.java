@@ -55,6 +55,18 @@ public class Collectible {
         this.yPos = platform.getYPos() - 30;
     }
 
+    public void setWidth(int width){
+        this.width = width;
+    }
+
+    public void setHeight(int height){
+        this.height = height;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
     public int getXPos() {
         return xPos;
     }
@@ -94,5 +106,11 @@ public class Collectible {
     //apply effects to other players/group of players
     public void applyEffects(ArrayList<Player> players){
 
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Collectible[xPos=%d,yPos=%d,width=%d,height=%d,type=%s,collected=%b]",
+                xPos, yPos, width, height, type != null ? type : "None", collected);
     }
 }

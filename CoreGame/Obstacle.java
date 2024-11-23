@@ -1,9 +1,12 @@
 package CoreGame;
 
+import ClientSide.*;
+import ServerSide.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.Objects;
 
 public class Obstacle {
@@ -28,7 +31,9 @@ public class Obstacle {
         if (!type.equals(Obstacle.type)) {
             try {
                 Obstacle.type = type;
-                BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/" + type + ".png"));
+                System.out.println("Obstacle type: " + Obstacle.type);
+                BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/spikes.png"));
+                System.out.println("read obstacles");
                 hazardImage = tmpImage;
                 imageRead = true;
             } catch (IOException e) {
@@ -58,6 +63,18 @@ public class Obstacle {
         this.yPos = y;
     }
 
+    public void setWidth(int width){
+        this.width = width;
+    }
+
+    public void setHeight(int height){
+        this.height = height;
+    }
+
+    public void setDisappears(boolean bool){
+        this.disappears = bool;
+    }
+
     // Getters for position
     public int getXPos() {
         return xPos;
@@ -84,6 +101,12 @@ public class Obstacle {
         if (hazardImage != null) {
             g.drawImage(hazardImage, xPos, yPos, width, height, null);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Obstacle[xPos=%d,yPos=%d,type=%s,width=%d,height=%d,disappears=%b,draw=%b,timeBeforeDisappearing=%d,timeBeforeAppearingAgain=%d]",
+                xPos, yPos, type, width, height, disappears, draw, timeBeforeDisappearing, timeBeforeAppearingAgain);
     }
 
     // stagger method for when the player collides with an obstacle. should be implemented in the game controller

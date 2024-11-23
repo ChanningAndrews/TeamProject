@@ -26,7 +26,7 @@ public class LoginControl {
             loginPanel.displayMessage("Please enter both username and password.");
             return;
         }
-
+        /*
         // Attempt to log in via GameClient (assuming GameClient has a login method)
         boolean loginSuccessful = gameClient.login(username, password);
 
@@ -35,6 +35,8 @@ public class LoginControl {
         } else {
             handleLoginFail();
         }
+
+         */
     }
 
     // Handle successful login

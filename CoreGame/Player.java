@@ -5,10 +5,12 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Random;
 import javax.imageio.ImageIO;
 
 public class Player {
     //--player character fields--
+    public int playerId = 1;
     private int xPos;
     private int yPos;
     private int xSpeed = 5;
@@ -40,6 +42,12 @@ public class Player {
 
     //------------------------Constructor-------------------------------------------------------------
     public Player(int avatarId) {
+        Random random = new Random();
+
+        // Generate a random integer
+        int randomInt = random.nextInt(2000);
+        this.setId(randomInt);
+
         this.avatarId = avatarId;
 
         switch(avatarId) {
@@ -187,6 +195,10 @@ public class Player {
         this.isMoving = status;
     }
 
+    public void setId(int id) {
+        this.playerId = id;
+    }
+
     //------------------------Getters-------------------------------------------------------------
     public int getXPos() {
         return this.xPos;
@@ -228,6 +240,10 @@ public class Player {
 
     public int getCharacterHeight() {
         return this.characterHeight;
+    }
+
+    public int getId() {
+        return playerId;
     }
 
     public boolean isMoving() {
@@ -276,5 +292,26 @@ public class Player {
         //more parsing as needed.
 
 
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerId=" + playerId +
+                ",xPos=" + xPos +
+                ",yPos=" + yPos +
+                ",xSpeed=" + xSpeed +
+                ",ySpeed=" + ySpeed +
+                ",avatarId=" + avatarId +
+                ",characterHeight=" + characterHeight +
+                ",characterWidth=" + characterWidth +
+                ",inAir=" + inAir +
+                ",onPlatform=" + onPlatform +
+                ",isMoving=" + isMoving +
+                ",facingLeft=" + facingLeft +
+                ",movingLeft=" + movingLeft +
+                ",movingRight=" + movingRight +
+                ",avatarType=" + avatarType +
+                ",animationFilePath=" + animationFilePath +
+                ",PLATFORM_IMAGE_PATH=" + PLATFORM_IMAGE_PATH;
     }
 }

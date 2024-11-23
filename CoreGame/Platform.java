@@ -20,6 +20,7 @@ public class Platform {
         if (!imageRead) {
             try {
                 BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/platform.png"));
+                System.out.println("read platforms fine");
                 platformImage = tmpImage;
                 imageRead = true;
             } catch (IOException e) {
@@ -31,6 +32,22 @@ public class Platform {
         this.yPos = yPos;
         this.width = (int) (width * scaleFactor);
         this.height = (int) (height * scaleFactor);
+    }
+
+    public void setWidth(int width){
+        this.width = width;
+    }
+
+    public void setHeight(int height){
+        this.height = height;
+    }
+
+    public void setIsDisappearing(boolean bool){
+        this.isDisappearing = bool;
+    }
+
+    public void setHasSpikes(boolean bool){
+        this.hasSpikes = bool;
     }
 
     public int getWidth() {
@@ -59,4 +76,13 @@ public class Platform {
             g.drawImage(platformImage, xPos, yPos, width, height, null);
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("Platform[xPos=%d,yPos=%d,width=%d,height=%d,isDisappearing=%b,hasSpikes=%b]",
+                xPos, yPos, width, height, isDisappearing, hasSpikes);
+    }
+
+
+
 }

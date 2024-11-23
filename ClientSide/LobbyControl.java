@@ -25,20 +25,20 @@ public class LobbyControl {
     // Create a new lobby
     public void createLobby() {
         System.out.println("Creating new lobby...");
-        gameClient.createGame();
+        //gameClient.createGame();
     }
 
     // Join an existing lobby
     public void joinLobby(String lobbyCode) {
         System.out.println("Joining lobby with code: " + lobbyCode);
-        gameClient.joinGame(lobbyCode);
+        //gameClient.joinGame(lobbyCode);
     }
 
     // Handle the start of the game when all players are ready
     public void handleStartGame() {
         if (lobbyData != null && allPlayersReady()) {
             System.out.println("All players are ready. Starting the game...");
-            gameClient.startGame();
+            //gameClient.startGame();
         } else {
             System.out.println("Not all players are ready.");
         }
@@ -48,7 +48,7 @@ public class LobbyControl {
     public void handlePlayerReadyStatus(String username, boolean isReady) {
         isPlayerReady = isReady;
         lobbyPanel.updateReadyStatus(username, isReady);  // Update specific player's ready status in the UI
-        gameClient.sendPlayerReady();
+        //gameClient.sendPlayerReady();
 
         System.out.println(username + (isReady ? " is ready." : " is not ready."));
     }
