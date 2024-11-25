@@ -312,6 +312,7 @@ public class Player {
                 ",movingRight=" + movingRight +
                 ",avatarType=" + avatarType +
                 ",animationFilePath=" + animationFilePath +
-                ",PLATFORM_IMAGE_PATH=" + PLATFORM_IMAGE_PATH;
+                ",PLATFORM_IMAGE_PATH=" + PLATFORM_IMAGE_PATH +
+                ",isStaggered=" + staggered;
     }
 }

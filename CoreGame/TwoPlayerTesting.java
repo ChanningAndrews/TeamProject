@@ -76,6 +76,7 @@ public class TwoPlayerTesting extends JPanel implements ActionListener {
 
     HashMap<Integer, Player> otherPlayers;
     private GameClient client;
+
     public TwoPlayerTesting(GameMap tilemap, GameClient client) {
 
         //String x = "aaaaa";

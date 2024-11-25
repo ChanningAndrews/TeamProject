@@ -13,7 +13,7 @@ public class Collectible {
     private int yPos;
     private int width = 20;  // Default width for collectible
     private int height = 20;// Default height for collectible
-    private String type;
+    protected String type;
     private boolean collected;  // New field to track if the collectible is collected
     protected static String COLLECTABLE_IMAGE_PATH = "";
     //protected static Image collectableImage;
@@ -44,6 +44,10 @@ public class Collectible {
         }
     }
 
+
+    public BufferedImage getImage(){
+        return new BufferedImage(0,0,0);
+    }
 
     public void setPosition(int x, int y) {
         this.xPos = x;

@@ -143,6 +143,13 @@ public class GameServer extends AbstractServer {
             }
         }
 
+        //send a message to the client to let it know that we are done sending the initial setup information
+        try {
+            client.sendToClient("Initialization done");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void serverStarted() {
@@ -337,7 +344,7 @@ public class GameServer extends AbstractServer {
     public static Player fromString(String playerString) {
         String[] fields = playerString.split(",");
         int id = -1, xPos = 0, yPos = 0, xSpeed = 0, ySpeed = 0, avatarId = 1, characterHeight = 32, characterWidth = 32;
-        boolean inAir = false, onPlatform = false, isMoving = false, facingLeft = false, movingLeft = false, movingRight = false;
+        boolean inAir = false, onPlatform = false, isMoving = false, facingLeft = false, movingLeft = false, movingRight = false, staggered = false;
         String avatarType = "", animationFilePath = "", PLATFORM_IMAGE_PATH = "/bear_idle.png";
 
         // Parse fields
@@ -361,6 +368,7 @@ public class GameServer extends AbstractServer {
                 case "facingLeft": facingLeft = Boolean.parseBoolean(value); break;
                 case "movingLeft": movingLeft = Boolean.parseBoolean(value); break;
                 case "movingRight": movingRight = Boolean.parseBoolean(value); break;
+                case "isStaggered": staggered = Boolean.parseBoolean(value); break;
                 // case "avatarType": avatarType = value; break;
                 // case "animationFilePath": animationFilePath = value; break;
                 // case "PLATFORM_IMAGE_PATH": PLATFORM_IMAGE_PATH = value; break;
@@ -380,6 +388,7 @@ public class GameServer extends AbstractServer {
         player.setFacingLeft(facingLeft);
         player.setMovingLeft(movingLeft);
         player.setMovingRight(movingRight);
+        player.setStaggered(staggered);
 
         return player;
     }
@@ -440,6 +449,7 @@ public class GameServer extends AbstractServer {
         boolean hasSpikes = false;
 
         int collectibleDecider = 2;
+        int collectibleType = 0;
 
         boolean collectibleOnTop = false;
 
@@ -458,7 +468,15 @@ public class GameServer extends AbstractServer {
                 }
 
                 if(!hasSpikes && collectibleDecider == 0){
-                    collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
+                    collectibleType = random.nextInt(10);
+                    if(collectibleType % 2 == 0) {
+                        System.out.println("boost collectible");
+                        collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
+                    }
+                    else{
+                        System.out.println("freeze collectible");
+                        collectibles.add(new FreezeCollectible(currPlatformXPos + 15, rowPos - 32));
+                    }
                 }
 
                 if(hasSpikes){
