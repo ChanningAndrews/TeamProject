@@ -1,5 +1,6 @@
 package CoreGame;
 
+import ClientSide.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -8,11 +9,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
-public class SinglePlayerTesting extends JPanel implements ActionListener {
+public class TwoPlayerTesting extends JPanel implements ActionListener {
 
     // Constants defining game settings
     private static final int GRAVITY = 1;
@@ -70,14 +74,18 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
     private ArrayList<Collectible> collectibles;
 
-    public SinglePlayerTesting(GameMap tilemap) {
+    HashMap<Integer, Player> otherPlayers;
+    private GameClient client;
+    public TwoPlayerTesting(GameMap tilemap, GameClient client) {
 
-        String x = "aaaaa";
+        //String x = "aaaaa";
 
         spikes = new ArrayList<Obstacle>();
         collectibles = new ArrayList<Collectible>();
 
         this.tileMap = tilemap.getTileMap();
+        this.client = client;
+        otherPlayers = new HashMap();
 
         //players.add(new Player())
         myPlayer = new Player(1234);
@@ -121,9 +129,9 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
         // Initialize platforms and goal
         platforms = new ArrayList<Platform>();
-        generatePlatformsAndTraps(900, 216, 1848, 80 , 66, 15, platforms );
+        //generatePlatformsAndTraps(900, 216, 1848, 80 , 66, 15, platforms );
 
-        goal = new Rectangle( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 30, GOAL_SIZE, GOAL_SIZE);
+//        goal = new Rectangle( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 30, GOAL_SIZE, GOAL_SIZE);
 
         // Start timer for game updates
         Timer timer = new Timer(20, this);
@@ -151,6 +159,14 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
                         myPlayer.setInAir(true);
                         myPlayer.setOnPlatform(false);
                     }
+
+                    try {
+                        client.sendToServer(myPlayer.toString());
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+
                     repaint();
                 }//redraw the frame every time an input is made.
             }
@@ -164,10 +180,24 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
                     myPlayer.setMoving(false);
                     myPlayer.setMovingRight(false);
                 }
+
+                try {
+                    client.sendToServer(myPlayer.toString());
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+                repaint();
             }
         });
 
 
+        System.out.println("Panel width: " + getPanelWidth());
+        System.out.println("Character height: " + getPlayer().getCharacterHeight());
+        System.out.println("Scale Factor: " + getScaleFactor());
+        System.out.println("Tile width: " + tileMap.getTileWidth());
+        System.out.println("Map width: " + tileMap.getMapWidth());
 
         setFocusable(true);
 
@@ -192,8 +222,10 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
         {
             try
             {
-                currCharSprite = ImageIO.read(getClass().getResource("/assets/bear_walk.png"));
-                myPlayer.updateCurrentPlayerSprite(currCharSprite.getSubimage(32 * animationCounter, 0, 32, 32));
+                //currCharSprite = ImageIO.read(getClass().getResource("/assets/bear_walk.png"));
+                //myPlayer.updateCurrentPlayerSprite(currCharSprite.getSubimage(32 * animationCounter, 0, 32, 32));
+                myPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_walk.png")));
+                myPlayer.updateCurrentPlayerSprite(myPlayer.getCurrentPlayerSprite().getSubimage(32 * animationCounter, 0, 32, 32));
             } catch (IOException e1)
             {
                 e1.printStackTrace();
@@ -213,25 +245,78 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             // Reset to idle sprite when not moving
             try
             {
-                currCharSprite = ImageIO.read(getClass().getResource("/assets/bear_idle.png"));
-                myPlayer.updateCurrentPlayerSprite(currCharSprite);
+                //currCharSprite = ImageIO.read(getClass().getResource("/assets/bear_idle.png"));
+                myPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_idle.png")));
             } catch (IOException e1)
             {
                 e1.printStackTrace();
             }
         }
 
+        for (Player otherPlayer : otherPlayers.values()) {
+            if (otherPlayer.isMoving()/*isMoving*/) {
+                try {
+                    //currCharSprite = ImageIO.read(getClass().getResource("/bear_walk.png"));
+                    //currCharSprite = currCharSprite.getSubimage(32 * animationCounter, 0, 32, 32);
+                    otherPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_walk.png")));
+                    otherPlayer.updateCurrentPlayerSprite(otherPlayer.getCurrentPlayerSprite().getSubimage(32 * animationCounter, 0, 32, 32));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                // Update animation every 70ms
+                if (accumulatedTime >= 70) {
+                    animationCounter++;
+                    accumulatedTime = 0;
+                }
+                if (animationCounter >= NUM_MOVE_ANIMATIONS) animationCounter = 0;
+            } else {
+                // Reset to idle sprite when not moving
+                try {
+                    //currCharSprite = ImageIO.read(getClass().getResource("/bear_idle.png"));
+                    otherPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_idle.png")));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+        /*
         //handle appearance and disappearance of spikes
         if(spikeAppearanceTime >= Obstacle.timeBeforeDisappearing){
             Obstacle.draw = !Obstacle.draw;
             spikeAppearanceTime = 0;
         }
+
+         */
+
+
+
         // Handle horizontal movement
         if (myPlayer.isMovingLeft()) myPlayer.setXPos(myPlayer.getXPos() - myPlayer.getXSpeed());
         if (myPlayer.isMovingRight()) myPlayer.setXPos(myPlayer.getXPos() + myPlayer.getXSpeed());
 
+        for (Player otherPlayer : otherPlayers.values()) {
+            //System.out.println("Attempting to move other player:");
+            //System.out.println("Other player is moving left: " + otherPlayer.isMovingLeft());
+            //System.out.println("Other player is moving right: " + otherPlayer.isMovingRight());
+            //System.out.println("Other player is moving at all: " + otherPlayer.isMoving());
+            //System.out.println("Other player current positions: " + otherPlayer.getPos());
+
+            if (otherPlayer.isMovingLeft()/*movingLeft*/) otherPlayer.setXPos(otherPlayer.getXPos() - otherPlayer.getXSpeed());//x -= MOVE_SPEED;
+            if (otherPlayer.isMovingRight()/*movingRight*/) otherPlayer.setXPos(otherPlayer.getXPos() + otherPlayer.getXSpeed());//x += MOVE_SPEED;
+
+            //System.out.println("Other player new positions after moving: " + otherPlayer.getPos());
+        }
+
+
         //this part ensures that the player never moves out of bounds horizontally
         myPlayer.setXPos(Math.max(0, Math.min(myPlayer.getXPos(), this.panelWidth - myPlayer.getCharacterWidth())));
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            otherPlayer.setXPos(Math.max(0, Math.min(otherPlayer.getXPos(), this.panelWidth - otherPlayer.getCharacterWidth())));
+
+        }
 
         //ensure that the player avatar is bounded by the castle walls
         if(myPlayer.getYPos() < towerWallStart && myPlayer.getXPos() > (leftTowerXPos-10) && myPlayer.getXPos() < rightTowerXPos - 10)
@@ -239,11 +324,28 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             myPlayer.setXPos(Math.max(leftTowerXPos, Math.min(myPlayer.getXPos(), rightTowerXPos - myPlayer.getCharacterWidth())));
         }
 
+        for (Player otherPlayer : otherPlayers.values()) {
+            if(otherPlayer.getYPos() < towerWallStart && otherPlayer.getXPos() > (leftTowerXPos-10) && otherPlayer.getXPos() < rightTowerXPos - 10)
+            {
+                otherPlayer.setXPos(Math.max(leftTowerXPos, Math.min(otherPlayer.getXPos(), rightTowerXPos - otherPlayer.getCharacterWidth())));
+            }
+        }
+
         // Apply gravity for jumping/falling
         if (myPlayer.isInTheAir())
         {
             myPlayer.setYSpeed(myPlayer.getYSpeed() + GRAVITY); //gravity should be outside of the player's control I think. So maybe it's specific to the panel controller
             myPlayer.setYPos(myPlayer.getYPos() + myPlayer.getYSpeed());
+        }
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            if (otherPlayer.isInTheAir()) {
+                otherPlayer.setYSpeed(otherPlayer.getYSpeed() + GRAVITY); //gravity should be outside of the player's control I think. So maybe it's specific to the panel controller
+                otherPlayer.setYPos(otherPlayer.getYPos() + otherPlayer.getYSpeed());
+            }
+
+            //otherPlayer.setYSpeed(otherPlayer.getYSpeed() + GRAVITY); //gravity should be outside of the player's control I think. So maybe it's specific to the panel controller
+            //otherPlayer.setYPos(otherPlayer.getYPos() + otherPlayer.getYSpeed());
         }
 
         //check collision with spikes and see if player is staggered
@@ -260,6 +362,25 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
                     myPlayer.setStaggered(true);
                     myPlayer.setYSpeed(JUMP_STRENGTH*3/5);
                     break;
+                }
+            }
+        }
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            if(Obstacle.draw && !otherPlayer.isStaggered())
+            {
+                for (Obstacle spike : spikes)
+                {
+                    if (otherPlayer.getYPos() + otherPlayer.getCharacterHeight() >= spike.getYPos() &&
+                            otherPlayer.getYPos() + otherPlayer.getCharacterHeight() <= spike.getYPos() + spike.getHeight() &&
+                            otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= spike.getXPos() &&
+                            otherPlayer.getXPos() <= spike.getXPos() + spike.getWidth() )
+                    {
+
+                        otherPlayer.setStaggered(true);
+                        otherPlayer.setYSpeed(JUMP_STRENGTH*3/5);
+                        break;
+                    }
                 }
             }
         }
@@ -288,6 +409,30 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             staggerTime = 0;
         }
 
+        for (Player otherPlayer : otherPlayers.values()){
+            if(otherPlayer.isStaggered())
+            {
+                staggerTime += elapsedTime;
+                if(otherPlayer.isInTheAir())
+                {
+                    if (otherPlayer.isFacingLeft())
+                    {
+                        otherPlayer.setXPos(otherPlayer.getXPos() + otherPlayer.getXSpeed());
+                    }
+                    else
+                    {
+                        otherPlayer.setXPos((otherPlayer.getXPos()) - otherPlayer.getXSpeed());
+                    }
+                }
+            }
+
+            //player stays staggered for a specific amount of time. Here it's supposed to be 2 seconds
+            if(staggerTime >= 2000){
+                otherPlayer.setStaggered(false);
+                staggerTime = 0;
+            }
+        }
+
         // Check collision with platforms
         for (Platform platform : platforms) {
             if (myPlayer.getYPos() + myPlayer.getCharacterHeight() >= platform.getYPos() &&
@@ -313,27 +458,126 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
         }
 
+        for (Platform platform : platforms) {
+            for (Player otherPlayer : otherPlayers.values()) {
+                if (otherPlayer.getYPos() + otherPlayer.getCharacterHeight() >= platform.getYPos() &&
+                        otherPlayer.getYPos() + otherPlayer.getCharacterHeight() <= platform.getYPos() + otherPlayer.getYSpeed() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= platform.getXPos() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() <= platform.getXPos() + platform.getWidth()
+                    	/*y + characterHeight >= platform.getYPos() &&
+                        //y + characterHeight <= platform.getYPos() + yVelocity &&
+                        //x + characterWidth > platform.getXPos() &&
+                        //x < platform.getXPos() + platform.getWidth()*/) {
+
+                    otherPlayer.setYPos(platform.getYPos() - otherPlayer.getCharacterHeight());
+                    //y = platform.getYPos() - characterHeight;
+
+                    otherPlayer.setYSpeed(0);
+                    otherPlayer.setInAir(false);
+                    otherPlayer.setOnPlatform(true);
+                    break;
+                    //yVelocity = 0;
+                    //inAir = false;
+                    //onPlatform = true;
+                    //break;
+                }
+                else {
+                    otherPlayer.setOnPlatform(false);
+                    //onPlatform = false; //to change this logic at some point
+                }
+            }
+        }
+
+
         //check collision with collectibles and see if player is staggered
 
-            for (Collectible collectible : collectibles)
+        /*
+        for (Collectible collectible : collectibles)
+        {
+            if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                    myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                    myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                    myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
             {
-                if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
-                        myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
-                        myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
-                        myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
+
+                collectible.applyEffects(myPlayer);
+                collectibles.remove(collectible);
+                break;
+            }
+
+            for (Player otherPlayer : otherPlayers.values()){
+                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
                 {
 
-                    collectible.applyEffects(myPlayer);
+                    //collectible.applyEffects(otherPlayer);
                     collectibles.remove(collectible);
                     break;
                 }
             }
 
 
+        }
+
+         */
+
+        Iterator<Collectible> iterator = collectibles.iterator();
+        while (iterator.hasNext()) {
+            Collectible collectible = iterator.next();
+            if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                    myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                    myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                    myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
+
+                collectible.applyEffects(myPlayer);
+                iterator.remove(); // Safe removal using the iterator
+                break;
+            }
+
+            for (Player otherPlayer : otherPlayers.values()) {
+                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
+
+                    // collectible.applyEffects(otherPlayer);
+                    iterator.remove(); // Safe removal using the iterator
+                    break;
+                }
+            }
+        }
+
+        /*
+        for (Collectible collectible : collectibles)
+        {
+            for (Player otherPlayer : otherPlayers.values()){
+                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
+                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
+                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
+                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
+                {
+
+                    //collectible.applyEffects(otherPlayer);
+                    collectibles.remove(collectible);
+                    break;
+                }
+            }
+        }
+
+         */
 
         // Check if player is in the air
         if (!myPlayer.isOnPlatform() && y < mapHeight - myPlayer.getCharacterHeight()) {
             myPlayer.setInAir(true);
+        }
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            if (!otherPlayer.isOnPlatform()/*onPlatform*/ && y < /*MAP_HEIGHT*/mapHeight - otherPlayer.getCharacterHeight()/*characterHeight*/) {
+                otherPlayer.setInAir(true);
+                //inAir = true;
+            }
         }
 
         // makes player stay on top of the floor of the map
@@ -344,6 +588,18 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             myPlayer.setInAir(false);
         }
 
+        for (Player otherPlayer : otherPlayers.values()) {
+            if (otherPlayer.getYPos() >= (tileMap.getMapHeight()-5)* tileMap.getTileHeight())//y >= 504 /*- characterHeight*/) {
+            {
+                otherPlayer.setYPos((tileMap.getMapHeight()-5)* tileMap.getTileHeight());
+                otherPlayer.setYSpeed(0);
+                otherPlayer.setInAir(false);
+
+                //y = 504 /*- characterHeight*/;
+                //yVelocity = 0;
+                //inAir = false;
+            }
+        }
 
         // Adjust camera position to follow player
         if (myPlayer.getYPos()  < cameraY + panelHeight / 3)
@@ -358,11 +614,15 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
         //to ensure that the camera is always within the bounds of the map
         cameraY = Math.max(0, Math.min(cameraY, mapHeight - panelHeight));
 
-         //Check if player reached the goal
+        /*
+        //Check if player reached the goal
         if (new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal))
         {
-           gameWon = true;
+            gameWon = true;
         }
+
+         */
+
 
         //repaint after all the checks have been made
         repaint();
@@ -401,8 +661,8 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             }
 
             //draw goal
-            g2d.setColor(Color.GREEN);
-            g2d.fillOval(goal.x, goal.y, GOAL_SIZE, GOAL_SIZE);
+            //g2d.setColor(Color.GREEN);
+            //g2d.fillOval(goal.x, goal.y, GOAL_SIZE, GOAL_SIZE);
 
             //flip the player's sprite appropriately based on which direction the avatar is facing
             if (myPlayer.isFacingLeft()) {
@@ -410,6 +670,21 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             } else {
                 g2d.drawImage(myPlayer.getCurrentPlayerSprite(), myPlayer.getXPos() + myPlayer.getCharacterWidth(), myPlayer.getYPos(), -myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight(), null);
             }
+
+            for (Player otherPlayer : otherPlayers.values()) {
+                //System.out.println("Drawing player " + otherPlayer.getId() + " at " + otherPlayer.getPos());
+                if (otherPlayer.isFacingLeft()) {
+                    //System.out.println("Drawing other player at : " + otherPlayer.getPos());
+                    //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
+                    g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos()/*x*/, otherPlayer.getYPos()/*y*/, otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
+                } else {
+                    //System.out.println("Drawing other player at : " + otherPlayer.getPos());
+                    //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
+                    g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos() + otherPlayer.getCharacterWidth(), otherPlayer.getYPos(), -otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
+                }
+            }
+
+
 
             //for debugging purposes
             displayDebugInfo(g2d);
@@ -438,9 +713,12 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             g2d.drawString("Facing: Right", 10, cameraY + 70);
         }
 
+        //g2d.drawString("Current Sprite: " + myPlayer.getCurrentPlayerSprite(), 10, cameraY + 85);
+
         if(myPlayer.isOnPlatform()) {
             //g2d.drawString("Platform Dimensions:", 10, 85);
-            g2d.drawString("( " + platformPlayerIsOn.getXPos()+ ", " + platformPlayerIsOn.getYPos() +  " )", 10, cameraY + 85);
+
+            //g2d.drawString("( " + platformPlayerIsOn.getXPos()+ ", " + platformPlayerIsOn.getYPos() +  " )", 10, cameraY + 85);
             g2d.drawString("( " + platformPlayerIsOn.getWidth()+ ", " + platformPlayerIsOn.getHeight() +  " )", 10, cameraY + 100);
         }
 
@@ -450,6 +728,44 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
         if(myPlayer.isStaggered()){
             g2d.drawString("STAGGERED!!!", 10, cameraY + 175);
         }
+
+
+
+
+        for (Player otherPlayer : otherPlayers.values()){
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font("Arial", Font.BOLD, 12));
+            g2d.drawString("Avatar Position:", 10, cameraY+200);
+            g2d.drawString("( " + otherPlayer.getXPos() + " , "+ otherPlayer.getYPos() + " )", 10, cameraY+215);
+            g2d.drawString("In Air: " + otherPlayer.isInTheAir(), 10, cameraY + 230);
+            g2d.drawString("On Platform: " + otherPlayer.isOnPlatform(), 10, cameraY + 245);
+            if(otherPlayer.isFacingLeft()) {
+                g2d.drawString("Facing: Left" , 10, cameraY + 260);
+            }
+            else
+            {
+                g2d.drawString("Facing: Right", 10, cameraY + 260);
+            }
+
+            //g2d.drawString("Current Sprite: " + otherPlayer.getCurrentPlayerSprite(), 10, cameraY + 290);
+
+            if(otherPlayer.isOnPlatform()) {
+                //g2d.drawString("Platform Dimensions:", 10, 85);
+
+                //g2d.drawString("( " + platformPlayerIsOn.getWidth()+ ", " + platformPlayerIsOn.getHeight() +  " )", 10, cameraY + 305);
+            }
+
+            g2d.drawString("CameraY: " + cameraY, 10, cameraY + 320);
+            g2d.drawString("Tile Height: " + tileMap.getTileHeight(), 10, cameraY + 335);
+
+            if(otherPlayer.isStaggered()){
+                g2d.drawString("STAGGERED!!!", 10, cameraY + 350);
+            }
+
+        }
+
+
+
     }
 
     //should be incorporated on the server side. Should only be called once to get the platform position
@@ -485,6 +801,7 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             for(int i = 0; i < numPlatformsPerRow; i++) {
                 platformsContainer.add(new Platform(currPlatformXPos, rowPos, scaleFactor));
                 spikeDecider = random.nextInt(4);
+                //spikeDecider = 4;
 
                 if(spikeDecider == 0){
                     hasSpikes = true;
@@ -496,11 +813,11 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
                 if(!hasSpikes && collectibleDecider == 0){
                     collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
-
                 }
 
                 if(hasSpikes){
                     spikePlacement = random.nextInt(3);
+                    //spikePlacement = 1;
                     spikes.add(new Obstacle(currPlatformXPos + (spikePlacement * 24), rowPos-24, "spikes", scaleFactor));
                 }
                 else{
@@ -526,8 +843,15 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
 
         }
 
+        System.out.println("Client generated collectibles: " + collectibles);
+        System.out.println("Client generated platforms: " + platforms);
+        System.out.println("Client generated spikes: " + spikes);
+
         platforms.add(lastPlatform);
     }
+
+
+
 
 
     public void renderMap(Graphics2D g2d, int cameraY){
@@ -551,6 +875,199 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             }
         }
 
+    }
+
+    public Player getPlayer() {
+        //System.out.println("Returning player, current sprite is: " + myPlayer.getCurrentPlayerSprite());
+        return myPlayer;
+    }
+
+    public HashMap<Integer, Player> getOtherPlayers(){
+        return otherPlayers;
+    }
+
+
+    public void addNewPlayer(Player newPlayer) {
+        System.out.println("In the addnewplayer method, new player added");
+
+        /*
+        try {
+            BufferedImage tempSprite = ImageIO.read(getClass().getResource("/bear_idle.png"));
+            newPlayer.updateCurrentPlayerSprite(tempSprite);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+         */
+
+        otherPlayers.put(newPlayer.getId(), newPlayer);
+
+
+        //System.out.println("New player sprite: " + otherPlayers.get(newPlayer.getId()).getCurrentPlayerSprite());
+        //otherPlayers.get(newPlayer.getId()).getCurrentPlayerSprite();
+    }
+
+
+    public void updateOtherPlayer(Player newPlayer) {
+
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            if(otherPlayer.getId() == newPlayer.getId()) {
+                //System.out.println("Player " + otherPlayer.getId() + " moved");
+
+                //otherPlayer.setXPos(newPlayer.getXPos());
+                //otherPlayer.setYPos(newPlayer.getYPos());
+
+                otherPlayer.setMoving(newPlayer.isMoving());
+                otherPlayer.setFacingLeft(newPlayer.isFacingLeft());
+                otherPlayer.setMovingLeft(newPlayer.isMovingLeft());
+                otherPlayer.setMovingRight(newPlayer.isMovingRight());
+                otherPlayer.setYSpeed(newPlayer.getYSpeed());
+                otherPlayer.setInAir(newPlayer.isInTheAir());
+                otherPlayer.setOnPlatform(newPlayer.isOnPlatform());
+
+                otherPlayer.setXPos(newPlayer.getXPos());
+                otherPlayer.setYPos(newPlayer.getYPos());
+
+                //otherPlayer.setPlayerDimensions(32,32);
+
+                //System.out.println("Other player presed or released a key");
+                //System.out.println("Other player is moving: " + otherPlayer.isMoving());
+
+
+            }
+        }
+
+        repaint();
+    }
+
+
+
+    /*
+    public void updateOtherPlayer(String playerString) {
+    	String[] fields = playerString.split(",");
+        int id = -1;
+
+        // Parse the ID first
+        for (String field : fields) {
+            String[] keyValue = field.split("=");
+            if (keyValue[0].trim().equals("PlayerId")) {
+                id = Integer.parseInt(keyValue[1].trim());
+                break;
+            }
+        }
+
+        Player player = otherPlayers.get(id);
+        if (player == null) {
+            System.out.println("Player with ID " + id + " not found.");
+            return;
+        }
+
+        // Update other fields
+        for (String field : fields) {
+            String[] keyValue = field.split("=");
+            String key = keyValue[0].trim();
+            String value = keyValue[1].trim();
+
+            switch (key) {
+                case "isMoving":
+                    player.setMoving(Boolean.parseBoolean(value));
+                    break;
+                case "isFacingLeft":
+                    player.setFacingLeft(Boolean.parseBoolean(value));
+                    break;
+                case "isMovingLeft":
+                    player.setMovingLeft(Boolean.parseBoolean(value));
+                    break;
+                case "isMovingRight":
+                    player.setMovingRight(Boolean.parseBoolean(value));
+                    break;
+                case "ySpeed":
+                    player.setYSpeed(Integer.parseInt(value));
+                    break;
+                case "isInTheAir":
+                    player.setInAir(Boolean.parseBoolean(value));
+                    break;
+                case "isOnPlatform":
+                    player.setOnPlatform(Boolean.parseBoolean(value));
+                    break;
+                case "xPos":
+                    player.setXPos(Integer.parseInt(value));
+                    break;
+                case "yPos":
+                    player.setYPos(Integer.parseInt(value));
+                    break;
+            }
+        }
+    }
+    */
+
+
+    public void updatePositions(HashMap<Integer, Player> positions) {
+        System.out.println("Updating other players");
+        System.out.println(otherPlayers);
+        //this.otherPlayers = positions;
+        repaint();
+    }
+
+    public static Player fromString(String playerString) {
+        String[] fields = playerString.split(",");
+        int id = -1;
+
+        // Parse the ID first
+        for (String field : fields) {
+            String[] keyValue = field.split("=");
+            if (keyValue[0].trim().equals("id")) {
+                id = Integer.parseInt(keyValue[1].trim());
+                break;
+            }
+        }
+
+        if (id == -1) {
+            throw new IllegalArgumentException("Invalid player data: ID not found");
+        }
+
+        Player player = new Player(1); // Default avatarId or adjust as needed
+        player.setId(id);
+
+        // Set other fields
+        for (String field : fields) {
+            String[] keyValue = field.split("=");
+            String key = keyValue[0].trim();
+            String value = keyValue[1].trim();
+
+            switch (key) {
+                case "isMoving":
+                    player.setMoving(Boolean.parseBoolean(value));
+                    break;
+                case "isFacingLeft":
+                    player.setFacingLeft(Boolean.parseBoolean(value));
+                    break;
+                case "isMovingLeft":
+                    player.setMovingLeft(Boolean.parseBoolean(value));
+                    break;
+                case "isMovingRight":
+                    player.setMovingRight(Boolean.parseBoolean(value));
+                    break;
+                case "ySpeed":
+                    player.setYSpeed(Integer.parseInt(value));
+                    break;
+                case "isInTheAir":
+                    player.setInAir(Boolean.parseBoolean(value));
+                    break;
+                case "isOnPlatform":
+                    player.setOnPlatform(Boolean.parseBoolean(value));
+                    break;
+                case "xPos":
+                    player.setXPos(Integer.parseInt(value));
+                    break;
+                case "yPos":
+                    player.setYPos(Integer.parseInt(value));
+                    break;
+            }
+        }
+
+        return player;
     }
 
 
@@ -670,6 +1187,82 @@ public class SinglePlayerTesting extends JPanel implements ActionListener {
             System.out.println("Error with playing sound.");
             ex.printStackTrace();
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void addPlatform(Platform platform){
+        platforms.add(platform);
+    }
+
+    public void addSpike(Obstacle spike){
+        spikes.add(spike);
+    }
+
+    public void addCollectible(Collectible collectible){
+        System.out.println("Adding new collectible: " + collectible);
+        collectibles.add(collectible);
+    }
+
+
+
+    //setters and getters
+    public int getPanelWidth(){
+        return panelWidth;
+    }
+
+    public double getScaleFactor(){
+        return scaleFactor;
+    }
+
+    public TileMap getTileMap(){
+        return tileMap;
+    }
+
+    public void setSpikes(ArrayList<Obstacle> spikes){
+        this.spikes = spikes;
+    }
+    public ArrayList<Obstacle> getSpikes() {
+        return spikes;
+    }
+
+    public void setPlatforms(ArrayList<Platform> platforms){
+        this.platforms = platforms;
+    }
+    public ArrayList<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public ArrayList<Collectible> getCollectibles(){
+        return collectibles;
     }
 
 

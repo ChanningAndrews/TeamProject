@@ -35,6 +35,6 @@ public class ResultsController {
     public void handleExitButton() {
         System.out.println("Exiting results screen and returning to the main lobby.");
         // Logic to return to the main lobby or main menu
-        gameClient.returnToLobby();
+       //gameClient.returnToLobby();
     }
 }
