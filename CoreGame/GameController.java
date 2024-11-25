@@ -227,6 +227,11 @@ public class GameController implements ActionListener, KeyListener {
 
         }
 
+        try {
+            client.sendToServer(myPlayer.toString());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
         //repaint after all the checks have been made
         gamePanel.repaint();
     }
@@ -257,12 +262,12 @@ public class GameController implements ActionListener, KeyListener {
                 myPlayer.setOnPlatform(false);
             }
 
-            try {
-                client.sendToServer(myPlayer.toString());
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+//            try {
+//                client.sendToServer(myPlayer.toString());
+//            } catch (IOException e1) {
+//                // TODO Auto-generated catch block
+//                e1.printStackTrace();
+//            }
 
             gamePanel.repaint();
         }//redraw the frame every
@@ -278,12 +283,12 @@ public class GameController implements ActionListener, KeyListener {
             myPlayer.setMovingRight(false);
         }
 
-        try {
-            client.sendToServer(myPlayer.toString());
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+//        try {
+//            client.sendToServer(myPlayer.toString());
+//        } catch (IOException e1) {
+//            // TODO Auto-generated catch block
+//            e1.printStackTrace();
+//        }
 
         gamePanel.repaint();
     }
