@@ -23,7 +23,7 @@ public class GameServer extends AbstractServer {
     private ArrayList<Platform> platforms;
     private ArrayList<Obstacle> spikes;
 
-
+//------------constructor---------------------------------------
     public GameServer(int port) {
         super(port);
         setTimeout(1000);
@@ -102,6 +102,7 @@ public class GameServer extends AbstractServer {
         }
     }
     */
+
 
     @Override
     protected void clientConnected(ConnectionToClient client) {
@@ -605,7 +606,7 @@ public class GameServer extends AbstractServer {
 
 
 
-
+//---------------------main--------------------------------------------------
     public static void main(String[] args) {
         int port = 12345; // Change port as needed
         GameServer server = new GameServer(port);
