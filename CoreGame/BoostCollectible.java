@@ -11,6 +11,7 @@ public class BoostCollectible extends Collectible {
 
     public BoostCollectible(int x, int y){
         super(x,y);
+        this.type = "boost";
 
         try {
             collectibleImage = ImageIO.read(getClass().getResource(BOOST_COLLECTABLE_IMAGE_PATH));
@@ -24,6 +25,10 @@ public class BoostCollectible extends Collectible {
     @Override
     public void applyEffects(Player player) {
         player.setXSpeed(player.getXSpeed()+ 5);
+    }
+
+    public BufferedImage getImage(){
+        return this.collectibleImage;
     }
 
 

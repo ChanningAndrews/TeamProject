@@ -1,110 +1,111 @@
 package ClientSide;
 
+import CoreGame.GameController;
 import CoreGame.GameMap;
+import CoreGame.GamePanel;
 import CoreGame.SinglePlayerTesting;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
-public class GameGUI {
-
-    // Fields
-    private JFrame mainFrame;
-    private CardLayout cardLayout;
-    private JPanel currentPanel;
-    private JPanel loginPanel;
-    private JPanel lobbyPanel;
-    private JPanel gamePanel;
-    private JPanel mainMenuPanel;
-
+public class GameGUI extends JFrame{
     // Constructor
     public GameGUI() throws Exception {
-        mainFrame = new JFrame("Game GUI");
-        cardLayout = new CardLayout();
-        currentPanel = new JPanel(cardLayout);
-        mainFrame.add(currentPanel);
+        // 1) Set the title and default close operation.
+        this.setTitle("Ascend");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Initialize panels
-        initializeMainMenuPanel();
-        initializeLoginPanel();
-        initializeLobbyPanel();
-        initializeGamePanel();
+        // 2) create game client
+        GameClient client = new GameClient("localhost", 12345);
 
-        // Frame settings
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(800, 600);  // Set frame size
-        mainFrame.setVisible(true);
+
+        // 3) Create the card layout container.
+        CardLayout cardLayout = new CardLayout();
+        JPanel container = new JPanel(cardLayout);
+
+        // 4) Next, create the Controllers
+        //InitialController initialController = new InitialController(container);
+        //LoginController loginController = new LoginControl(container, client);
+        //CreateAccountController createAccountController = new CreateAccountController(container, client);
+        //MenuController menuController = new MenuController(container, client);
+        //JoinController joinController = new JoinController(container, client);
+        //HostController hostController = new HostController(container, client);
+        //LobbyController lobbyController = new LobbyController(container);
+        GameController gameController = new GameController(container, client);
+        //ResultsController resultsController = new ResultsController(container, client);
+
+
+        // 5) set the controllers that will be communicating with the client in the client
+//        client.setCreateAccountControl(createAccountController);
+//        client.setLoginControl(loginController);
+//        client.setMenuControl(menuController);
+//        client.setJoinControl(joinController);
+//        client.setHostControl(hostController);
+//        client.setLobbyControl(lobbyController);
+        client.setGameController(gameController);
+        //client.setResultsControl(resultsController);
+
+        // 6) open connection to server
+        //the client should automatically pass the map it will have created after a successful connection to the server to the gameController
+        try {
+            client.openConnection();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        // 7) link the different panels/views of the app/GUI to their controllers
+//        JPanel view1 = new InitialPanel(initialController);
+//        JPanel view2 = new LoginPanel(loginController);
+//        JPanel view3 = new CreateAccountPanel(cac);
+//        JPanel view4 = new JoinPanel(joinController);
+//        JPanel view5 = new HostPanel(hostController);
+//        JPanel view6 = new LobbyPanel(lobbyController);
+        JPanel view7 = new GamePanel(gameController);
+        //JPanel view8 = new ResultsPanel(resultsController);
+        while(true) {
+            if(client.isConnectionSetUpOver()) {
+                //System.out.println("set up is over");
+                client.createMap();
+                break;
+            }
+            System.out.println("In loop");
+        }
+
+        System.out.println("out of the loop");
+        System.out.println("In loop");
+        // 8) Add the views to the card layout container.
+//        container.add(view1, "1");
+//        container.add(view2, "2");
+//        container.add(view3, "3");
+//        container.add(view4, "4");
+//        container.add(view5, "5");
+//        container.add(view6, "6");
+        System.out.println("Adding the gamePanel to the card layout manager");
+        container.add(view7, "7");
+//        container.add(view8, "8");
+
+
+        // 9) Show the initial view in the card layout.
+        System.out.println("showing the gamePanel");
+        cardLayout.show(container, "7");
+
+        // 10) Add the card layout container to the JFrame.
+        this.add(container, BorderLayout.CENTER);
+
+        // 11) Show the JFrame.
+        this.setSize(1080, 660);
+        this.setVisible(true);
+        //this.setFocusable(true);
     }
 
-    // Initialize main menu panel
-    private void initializeMainMenuPanel() {
-        mainMenuPanel = new JPanel();
-        JButton startButton = new JButton("Start Game");
-        startButton.addActionListener(e -> showLoginPanel());
-        mainMenuPanel.add(startButton);
-        addPanel(mainMenuPanel, "mainMenu");
-    }
-
-    // Initialize login panel
-    private void initializeLoginPanel() {
-        loginPanel = new JPanel();
-        loginPanel.add(new JLabel("Login Screen"));
-        JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(e -> showLobbyPanel());
-        loginPanel.add(loginButton);
-        addPanel(loginPanel, "login");
-    }
-
-    // Initialize lobby panel
-    private void initializeLobbyPanel() {
-        lobbyPanel = new JPanel();
-        lobbyPanel.add(new JLabel("Lobby Screen"));
-        JButton startGameButton = new JButton("Start Game");
-        startGameButton.addActionListener(e -> showGamePanel());
-        lobbyPanel.add(startGameButton);
-        addPanel(lobbyPanel, "lobby");
-    }
-
-    // Initialize game panel
-    private void initializeGamePanel() throws Exception {
-        // Set up the game map with a sample map matrix
-        int[][] mapMatrix = {
-                // Populate with map layout data as needed
-        };
-        GameMap gameMap = new GameMap(1000, 800, mapMatrix); // Customize map dimensions as needed
-
-        // Instantiate SinglePlayerTesting with GameMap
-        SinglePlayerTesting singlePlayerTest = new SinglePlayerTesting(gameMap);
-
-        // Create gamePanel and add singlePlayerTest
-        gamePanel = new JPanel(new BorderLayout());
-        gamePanel.add(singlePlayerTest, BorderLayout.CENTER);
-
-        addPanel(gamePanel, "game");
-    }
-
-    // Methods to switch panels
-    public void switchPanel(String panelName) {
-        cardLayout.show(currentPanel, panelName);
-    }
-
-    public void addPanel(JPanel panel, String name) {
-        currentPanel.add(panel, name);
-    }
-
-    public void showMainMenu() {
-        switchPanel("mainMenu");
-    }
-
-    public void showLoginPanel() {
-        switchPanel("login");
-    }
-
-    public void showLobbyPanel() {
-        switchPanel("lobby");
-    }
-
-    public void showGamePanel() {
-        switchPanel("game");
+    public static void main(String[] args){
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            try {
+                new GameGUI();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

@@ -9,13 +9,13 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
-public class GameController {
+public class GameController2 {
 
     private GameMap gameMap;
     private GameView gameView;
     private SinglePlayerTesting singlePlayerTesting;
 
-    public GameController() throws Exception {
+    public GameController2() throws Exception {
         initializeGameMap();   // Initialize the game map first
         initializeGamePanel(); // Initialize the game panel
     }

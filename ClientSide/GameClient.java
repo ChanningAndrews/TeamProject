@@ -3,15 +3,17 @@ package ClientSide;
 import ocsf.client.*;
 import CoreGame.*;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 public class GameClient extends AbstractClient {
+    //controllers
+    private CreateAccountControl createAccountController;
+    private LoginControl loginController;
+    private LobbyControl lobbyController;
+    private GameController gameController;
+
     private TileMap tileMap;
     TwoPlayerTesting gamePanel = null;
 
@@ -19,6 +21,8 @@ public class GameClient extends AbstractClient {
     ArrayList<Obstacle> spikes;
     ArrayList<Collectible> collectibles;
 
+
+    private boolean connectionSetUpOver = false;
 
     public GameClient(String host, int port) {
         super(host, port);
@@ -41,20 +45,20 @@ public class GameClient extends AbstractClient {
 
                 //System.out.println(gamePanel.getPlayer().getId());
 
-                if(tempPlayer.getId() == gamePanel.getPlayer().getId()) {
+                if(tempPlayer.getId() == gameController.getPlayer().getId()/*gamePanel.getPlayer().getId()*/) {
                     return;
                 }
 
-                if(gamePanel.getOtherPlayers().containsKey(tempPlayer.getId()) && tempPlayer.getId() != gamePanel.getPlayer().getId()) {
+                if(gameController.getOtherPlayers().containsKey(tempPlayer.getId()) && tempPlayer.getId() != gameController.getPlayer().getId()) {
                     //System.out.println("Player " + tempPlayer.getId() + " moved");
                     //System.out.println("Their new position is " + tempPlayer.getPos());
-                    gamePanel.updateOtherPlayer(tempPlayer);
+                    gameController.updateOtherPlayer(tempPlayer);
 
-                    gamePanel.repaint();
+                    //gamePanel.repaint();
                 }
                 else{
                     System.out.println("CLIENT IS CALLING ADD NEW PLAYER");
-                    gamePanel.addNewPlayer(tempPlayer);
+                    gameController.addNewPlayer(tempPlayer);
                     System.out.println("New Player " + tempPlayer.getId() + " joined the game");
 
                 }
@@ -72,20 +76,28 @@ public class GameClient extends AbstractClient {
 
 
             if(message.startsWith("Platform")){
-                //System.out.println("Client got a platform from the server");
+                System.out.println("Client got a platform from the server");
                 Platform tempPlatform = parsePlatformFromString(message);
 
                 platforms.add(tempPlatform);
             }
 
             if(message.startsWith("Obstacle")){
+                System.out.println("Received a spike from the server");
                 Obstacle tempObstacle = parseObstacleFromString(message, 1.5);
                 spikes.add(tempObstacle);
             }
 
             if(message.startsWith("Collectible")){
+                System.out.println("Received a collectible from the server");
                 Collectible tempCollectible = parseCollectibleFromString(message);
                 collectibles.add(tempCollectible);
+            }
+
+            if(message.equals("Initialization done")){
+                System.out.println("Received all the initialized objects from the server. Attempting to set up the controller");
+
+                this.connectionSetUpOver = true;
             }
 
         }
@@ -173,6 +185,7 @@ public class GameClient extends AbstractClient {
     }
 
     public void createMap() throws Exception {
+        System.out.println("Entered the CreateMap method");
         int[][] mapMatrix = {
                 {0, 0, 0, 0, 0, 23, 15, 20, 20, 20, 20, 17, 20, 20, 20, 19, 15, 20, 20, 20, 15, 18, 20, 16, 17, 20, 20, 19, 18, 20, 20, 16, 15, 20, 15, 20, 20, 17, 20, 24, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 23, 20, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 18, 19, 19, 16, 15, 20, 20, 20, 20, 16, 15, 20, 20, 18, 18, 20, 15, 20, 16, 16, 20, 20, 24, 0, 0, 0, 0, 0},
@@ -280,42 +293,47 @@ public class GameClient extends AbstractClient {
 
          */
 
-        javax.swing.SwingUtilities.invokeLater(() -> {
+                for(Platform p : platforms){
+                    System.out.println("adding a platform from client to gameController");
+                    gameController.addPlatform(p);
+                }
 
+                System.out.println("All platforms from client copied to the gameController");
+
+                for(Obstacle o : spikes){
+                    gameController.addSpike(o);
+                }
+
+                System.out.println("All spikes from client copied to the gameController");
+
+                for(Collectible c : collectibles){
+                    gameController.addCollectible(c);
+                }
             //TwoPlayerTesting gamePanel = null;
             try {
-                gamePanel = new TwoPlayerTesting(gameMap, this);
+                //gamePanel = new TwoPlayerTesting(gameMap, this);
                 //System.out.println("Sending new player from client, current sprite is: " + gamePanel.getPlayer().getCurrentPlayerSprite());
-                sendToServer(gamePanel.getPlayer().toString());
+                System.out.println("Sending the new player from client");
+                sendToServer(gameController.getPlayer().toString());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
-            for(Platform p : platforms){
-                gamePanel.addPlatform(p);
-            }
+            System.out.println("setting up the gameController");
+            gameController.setUp(gameMap);
 
-            for(Obstacle o : spikes){
-                gamePanel.addSpike(o);
-            }
-
-            for(Collectible c : collectibles){
-                gamePanel.addCollectible(c);
-            }
-
-            javax.swing.JFrame frame = new javax.swing.JFrame("Multiplayer Game");
-            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            frame.add(gamePanel);
-            frame.pack();
-            frame.setVisible(true);
-        });
+//            javax.swing.JFrame frame = new javax.swing.JFrame("Multiplayer Game");
+//            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+//            frame.add(gamePanel);
+//            frame.pack();
+//            frame.setVisible(true);
     }
 
     public static Player fromString(String playerString) {
         String[] fields = playerString.split(",");
         int id = -1, xPos = 0, yPos = 0, xSpeed = 0, ySpeed = 0, avatarId = 1, characterHeight = 32, characterWidth = 32;
-        boolean inAir = false, onPlatform = false, isMoving = false, facingLeft = false, movingLeft = false, movingRight = false;
+        boolean inAir = false, onPlatform = false, isMoving = false, facingLeft = false, movingLeft = false, movingRight = false, staggered = false;
         String avatarType = "", animationFilePath = "", PLATFORM_IMAGE_PATH = "/bear_idle.png";
 
         // Parse fields
@@ -339,9 +357,10 @@ public class GameClient extends AbstractClient {
                 case "facingLeft": facingLeft = Boolean.parseBoolean(value); break;
                 case "movingLeft": movingLeft = Boolean.parseBoolean(value); break;
                 case "movingRight": movingRight = Boolean.parseBoolean(value); break;
-                //case "avatarType": avatarType = value; break;
-                //case "animationFilePath": animationFilePath = value; break;
-                //case "PLATFORM_IMAGE_PATH": PLATFORM_IMAGE_PATH = value; break;
+                case "isStaggered": staggered = Boolean.parseBoolean(value); break;
+                // case "avatarType": avatarType = value; break;
+                // case "animationFilePath": animationFilePath = value; break;
+                // case "PLATFORM_IMAGE_PATH": PLATFORM_IMAGE_PATH = value; break;
             }
         }
 
@@ -358,7 +377,7 @@ public class GameClient extends AbstractClient {
         player.setFacingLeft(facingLeft);
         player.setMovingLeft(movingLeft);
         player.setMovingRight(movingRight);
-
+        player.setStaggered(staggered);
 
         return player;
     }
@@ -533,8 +552,16 @@ public class GameClient extends AbstractClient {
                 }
             }
 
+            Collectible collectible = null;
             // Create and return the Collectible object
-            Collectible collectible = new BoostCollectible(xPos, yPos);
+            if(type.equals("boost") ){
+                collectible = new BoostCollectible(xPos, yPos);
+            }
+
+            if(type.equals("freeze")){
+                collectible = new FreezeCollectible(xPos, yPos);
+            }
+
             collectible.setWidth(width);
             collectible.setHeight(height);
             collectible.setType(type);
@@ -548,6 +575,8 @@ public class GameClient extends AbstractClient {
 
 
 
+    //client should not have a main. Main only runs on ClientGUI()
+    /*
     public static void main(String[] args) {
         GameClient client = new GameClient("10.251.147.172", 12345); // Adjust host/port as needed
         try {
@@ -560,5 +589,27 @@ public class GameClient extends AbstractClient {
         }
 
 
+    }
+    */
+
+
+    public void setCreateAccountController(CreateAccountControl createAccountController){
+        this.createAccountController = createAccountController;
+    }
+
+    public void setLoginController(LoginControl loginController){
+        this.loginController = loginController;
+    }
+
+    public void setLobbyController(LobbyControl lobbyController){
+        this.lobbyController = lobbyController;
+    }
+
+    public void setGameController(GameController gameController){
+        this.gameController = gameController;
+    }
+
+    public boolean isConnectionSetUpOver(){
+        return this.connectionSetUpOver;
     }
 }
