@@ -76,6 +76,8 @@ public class GameController implements ActionListener, KeyListener {
 
     private Platform platfromPlayerIsOn;
 
+    private Rectangle goal;
+
     //--------constructor---------------------------------------------
     public GameController(JPanel container, GameClient client){
         System.out.println("Game Controller is constructed.");
@@ -101,16 +103,21 @@ public class GameController implements ActionListener, KeyListener {
     //------what should typically happen before a frame is drawn-----------------
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (gameWon) return;
+        if (gameWon) {
+            this.gamePanel.setGameWon(gameWon);
+            this.gamePanel.repaint();
+            stopGameTimer();
+        }
+        else {
 
-        currentTime = System.currentTimeMillis();
-        elapsedTime = currentTime - lastTimestamp;
-        accumulatedTime += elapsedTime;
-        spikeAppearanceTime += elapsedTime;
-        lastTimestamp = currentTime;
+            currentTime = System.currentTimeMillis();
+            elapsedTime = currentTime - lastTimestamp;
+            accumulatedTime += elapsedTime;
+            spikeAppearanceTime += elapsedTime;
+            lastTimestamp = currentTime;
 
-        if(gameStarted) {
-            updateCharacterAnimation();
+            if (gameStarted) {
+                updateCharacterAnimation();
 
         /*
         //handle appearance and disappearance of spikes
@@ -121,17 +128,17 @@ public class GameController implements ActionListener, KeyListener {
 
          */
 
-            // Handle horizontal movement
-            handleHorizontalMovement();
+                // Handle horizontal movement
+                handleHorizontalMovement();
 
-            //this part ensures that the player never moves out of bounds horizontally
-            keepPlayerWithinBounds();
+                //this part ensures that the player never moves out of bounds horizontally
+                keepPlayerWithinBounds();
 
-            // Apply gravity for jumping/falling
-            applyGravity();
+                // Apply gravity for jumping/falling
+                applyGravity();
 
-            // Handle collisions
-            handlePlayerCollision();
+                // Handle collisions
+                handlePlayerCollision();
 
         /*
         for (Collectible collectible : collectibles)
@@ -184,14 +191,14 @@ public class GameController implements ActionListener, KeyListener {
 
          */
 
-            // Check if player is in the air
-            checkIfInAir();
+                // Check if player is in the air
+                checkIfInAir();
 
-            // makes player stay on top of the floor of the map
-            keepPlayersGrounded();
+                // makes player stay on top of the floor of the map
+                keepPlayersGrounded();
 
-            // Adjust camera position to follow player
-            adjustCamera();
+                // Adjust camera position to follow player
+                adjustCamera();
 
         /*
         //Check if player reached the goal
@@ -202,38 +209,38 @@ public class GameController implements ActionListener, KeyListener {
 
          */
 
-            updateGamePanelComponents();
-        }
-        else{
-            if(this.gamePanel.getReady()){
-                if(elapsedTime >= 1000000){
-                    readyTime = 0;
+                updateGamePanelComponents();
+            } else {
+                if (this.gamePanel.getReady()) {
+                    if (elapsedTime >= 1000000) {
+                        readyTime = 0;
+                    } else {
+                        readyTime += elapsedTime;
+                    }
+
+
+                    //System.out.println(readyTime);
                 }
-                else{
-                    readyTime += elapsedTime;
+
+                if (readyTime >= 3000) {
+                    this.gamePanel.setReady(false);
+                    this.gamePanel.setGo(true);
+                    gameStarted = true;
                 }
 
 
-                //System.out.println(readyTime);
             }
 
-            if(readyTime >= 3000){
-                this.gamePanel.setReady(false);
-                this.gamePanel.setGo(true);
-                gameStarted = true;
+            try {
+                client.sendToServer(myPlayer.toString());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
 
-
-
+            //repaint after all the checks have been made
+            gamePanel.repaint();
         }
 
-        try {
-            client.sendToServer(myPlayer.toString());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        //repaint after all the checks have been made
-        gamePanel.repaint();
     }
 
 
@@ -298,6 +305,7 @@ public class GameController implements ActionListener, KeyListener {
     //--------collision handling--------------------------------------------
 
     public void handlePlayerCollision(){
+
         //check collision with spikes and see if player is staggered
         handleCollisionWithSpikes();
 
@@ -309,6 +317,9 @@ public class GameController implements ActionListener, KeyListener {
 
 
         handleCollisionWithOtherPlayers();
+
+        //check collision with goal
+        handleCollisionWithGoal();
     }
 
     public void handleCollisionWithPlatforms(){
@@ -511,6 +522,19 @@ public class GameController implements ActionListener, KeyListener {
                     iterator.remove(); // Safe removal using the iterator
                     break;
                 }
+            }
+        }
+    }
+
+    public void handleCollisionWithGoal(){
+        if(new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal) ){
+            gameWon = true;
+        }
+
+        for(Player otherPlayer: otherPlayers.values()){
+            if(new Rectangle(otherPlayer.getXPos(), otherPlayer.getYPos(), otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight()).intersects(goal) ){
+                gameWon = true;
+                break;
             }
         }
     }
@@ -718,8 +742,9 @@ public class GameController implements ActionListener, KeyListener {
         this.towerWallStart = (tileMap.getMapHeight()-9)* tileMap.getTileHeight();
 
         this.gamePanel.setTileMap(tileMap);
+        goal = new Rectangle( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 30, 30, 30);
         updateGamePanelComponents();
-        this.gamePanel.setGoal();
+        this.gamePanel.setGoal(goal);
         this.gamePanel.setReady(true);
         startGameTimer();
     }
@@ -757,6 +782,10 @@ public class GameController implements ActionListener, KeyListener {
 
     public void startGameTimer(){
         this.gameLoopTimer.start();
+    }
+
+    public void stopGameTimer(){
+        this.gameLoopTimer.stop();
     }
 
     public Player getPlayer(){

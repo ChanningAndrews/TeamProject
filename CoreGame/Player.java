@@ -28,6 +28,7 @@ public class Player {
     private boolean movingLeft = false;
     private boolean movingRight = false;
     private boolean staggered = false;
+    private boolean goalReached = false;
 
     //--for retrieving the files relevant to the character's rendering--
     private String avatarType = "";
@@ -199,6 +200,10 @@ public class Player {
         this.playerId = id;
     }
 
+    public void setGoalReached(boolean status){
+        this.goalReached = status;
+    }
+
     //------------------------Getters-------------------------------------------------------------
     public int getXPos() {
         return this.xPos;
@@ -268,6 +273,9 @@ public class Player {
 
     public boolean isMovingRight() {return this.movingRight;}
 
+    public boolean hasReachedGoal(){
+        return this.goalReached;
+    }
 
     //------------------------Interaction with Server-------------------------------------------------------------
 

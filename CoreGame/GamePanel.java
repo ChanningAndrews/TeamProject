@@ -21,6 +21,8 @@ public class GamePanel extends JPanel {
     private boolean ready = false;
     private boolean go = false;
 
+    private boolean gameWon = false;
+
 
     //-----------constructor------------------------------------------------------------
 
@@ -76,32 +78,43 @@ public class GamePanel extends JPanel {
         //and bounded by the dimesnsions of the panel
         g2d.translate(0, -cameraY);
 
-        if(this.tileMap != null) {
+        if(gameWon){
+            displayWinMessage(g2d);
+        }
+        else {
+            if (this.tileMap != null) {
 
-            renderMap(g2d);
-            renderPlatforms(g2d);
-            renderObstacles(g2d);
-            renderCollectibles(g2d);
-            renderPlayer(g2d);
-            displayDebugInfo(g2d);
+                renderMap(g2d);
+                renderPlatforms(g2d);
+                renderObstacles(g2d);
+                renderCollectibles(g2d);
+                renderPlayer(g2d);
+                displayDebugInfo(g2d);
 
-            //draw goal
-            g2d.setColor(Color.GREEN);
-            g2d.fillOval(goal.x, goal.y, 30, 30);
+                //draw goal
+                g2d.setColor(Color.GREEN);
+                g2d.fillOval(goal.x, goal.y, 30, 30);
 
-            if(ready){
-                displayReady(g2d);
-            }
+                if (ready) {
+                    displayReady(g2d);
+                }
 
-            if(go){
-                displayStartMessage(g2d);
+                if (go) {
+                    displayStartMessage(g2d);
+                }
+            } else {
+                g2d.setColor(Color.BLACK);
+                g2d.setFont(new Font("Arial", Font.BOLD, 12));
+                g2d.drawString("Game Panel could not load.", 500, cameraY + 300);
             }
         }
-        else{
-            g2d.setColor(Color.BLACK);
-            g2d.setFont(new Font("Arial", Font.BOLD, 12));
-            g2d.drawString("Game Panel could not load.", 500, cameraY+300);
-        }
+    }
+
+
+    public void displayWinMessage(Graphics g2d){
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font("Arial", Font.BOLD, 12));
+        g2d.drawString("Someone won the Game!!!.", 500, cameraY + 300);
     }
 
     //display the character position and other information for debugging purposes.
@@ -246,6 +259,10 @@ public class GamePanel extends JPanel {
         g2d.drawString("GO!!!", 500, cameraY+300);
     }
 
+    public void setGameWon(boolean status){
+        this.gameWon = status;
+    }
+
     public void setTileMap(TileMap tileMap){
         this.tileMap = tileMap;
     }
@@ -266,8 +283,8 @@ public class GamePanel extends JPanel {
         return this.go;
     }
 
-    public void setGoal(){
-        goal = new Rectangle( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 30, 30, 30);
+    public void setGoal(Rectangle goal){
+        this.goal = goal;
     }
 
 }
