@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import ClientSide.EndPanel;
 import ClientSide.GameClient;
 
 import javax.imageio.ImageIO;
@@ -104,9 +105,14 @@ public class GameController implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (gameWon) {
-            this.gamePanel.setGameWon(gameWon);
-            this.gamePanel.repaint();
+//            this.gamePanel.setGameWon(gameWon);
+//            this.gamePanel.repaint();
             stopGameTimer();
+
+            CardLayout cardLayout = (CardLayout)container.getLayout();
+            EndPanel endPanel = (EndPanel)container.getComponent(7);
+            endPanel.setScreen(myPlayer);
+            cardLayout.show(container, "8");
         }
         else {
 
@@ -529,7 +535,7 @@ public class GameController implements ActionListener, KeyListener {
     public void handleCollisionWithGoal(){
         if(new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal) ){
             gameWon = true;
-            myPlayer.hasReachedGoal();
+            myPlayer.setGoalReached(true);
         }
 
         for(Player otherPlayer: otherPlayers.values()){

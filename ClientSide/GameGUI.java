@@ -56,7 +56,7 @@ public class GameGUI extends JFrame{
         JPanel view5 = new HostPanel(hc);
         JPanel view6 = new JoinPanel(jc);
         JPanel view7 = new GamePanel(gc);
-        JPanel view8 = new EndPanel(ec, gc);
+        JPanel view8 = new EndPanel(ec);
 
         while(true) {
             if(client.isConnectionSetUpOver()) {
@@ -87,6 +87,7 @@ public class GameGUI extends JFrame{
         this.setSize(1080, 624);
         this.setResizable(false);
         this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     public static void main(String[] args){

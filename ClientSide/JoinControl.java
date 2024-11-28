@@ -60,7 +60,7 @@ public class JoinControl implements ActionListener {
 
     public void displayError(String error)
     {
-        JoinPanel joinPanel = (JoinPanel)container.getComponent(1);
+        JoinPanel joinPanel = (JoinPanel)container.getComponent(5);
         joinPanel.setError(error);
     }
 
