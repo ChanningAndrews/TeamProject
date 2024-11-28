@@ -14,7 +14,7 @@ public class GamePanel extends JPanel {
     private ArrayList<Obstacle> spikes;
     private ArrayList<Collectible> collectibles;
     HashMap<Integer, Player> otherPlayers;
-    private Rectangle goal;
+    private Goal goal;
     private int cameraY;
     private double scaleFactor = 1.5;
 
@@ -100,8 +100,7 @@ public class GamePanel extends JPanel {
                 displayDebugInfo(g2d);
 
                 //draw goal
-                g2d.setColor(Color.GREEN);
-                g2d.fillOval(goal.x, goal.y, 30, 30);
+                renderGoal(g2d);
 
                 if (ready) {
                     displayReady(g2d);
@@ -234,6 +233,12 @@ public class GamePanel extends JPanel {
         }
     }
 
+    public void renderGoal(Graphics g2d){
+        //draw goal
+        g2d.drawImage(Goal.getGoalImage(), goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight(), null);
+
+    }
+
     public void renderPlayer(Graphics g2d){
         //flip the player's sprite appropriately based on which direction the avatar is facing
         if (myPlayer.isFacingLeft()) {
@@ -292,7 +297,7 @@ public class GamePanel extends JPanel {
         return this.go;
     }
 
-    public void setGoal(Rectangle goal){
+    public void setGoal(Goal goal){
         this.goal = goal;
     }
 

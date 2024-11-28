@@ -72,12 +72,13 @@ public class GameController implements ActionListener, KeyListener {
 
     private long readyTime = 0;
     private long goTime;
+    private long goalAnimationTime;
 
     private boolean gameStarted = false;
 
     private Platform platfromPlayerIsOn;
 
-    private Rectangle goal;
+    private Goal goal;
 
     //--------constructor---------------------------------------------
     public GameController(JPanel container, GameClient client){
@@ -120,6 +121,7 @@ public class GameController implements ActionListener, KeyListener {
             elapsedTime = currentTime - lastTimestamp;
             accumulatedTime += elapsedTime;
             spikeAppearanceTime += elapsedTime;
+            goalAnimationTime += elapsedTime;
             lastTimestamp = currentTime;
 
             if (gameStarted) {
@@ -133,12 +135,16 @@ public class GameController implements ActionListener, KeyListener {
         }
 
          */
+                animateGoal();
 
                 // Handle horizontal movement
                 handleHorizontalMovement();
 
                 //this part ensures that the player never moves out of bounds horizontally
                 keepPlayerWithinBounds();
+
+                //ensures that the players never go beyond the top of the map
+                keepPlayersBelowTopOfMap();
 
                 // Apply gravity for jumping/falling
                 applyGravity();
@@ -533,13 +539,13 @@ public class GameController implements ActionListener, KeyListener {
     }
 
     public void handleCollisionWithGoal(){
-        if(new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal) ){
+        if(new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(new Rectangle(goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight()) )){
             gameWon = true;
             myPlayer.setGoalReached(true);
         }
 
         for(Player otherPlayer: otherPlayers.values()){
-            if(new Rectangle(otherPlayer.getXPos(), otherPlayer.getYPos(), otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight()).intersects(goal) ){
+            if(new Rectangle(otherPlayer.getXPos(), otherPlayer.getYPos(), otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight()).intersects(new Rectangle(goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight()) )){
                 gameWon = true;
                 break;
             }
@@ -668,6 +674,29 @@ public class GameController implements ActionListener, KeyListener {
         }
     }
 
+    public void keepPlayersBelowTopOfMap(){
+        if (myPlayer.getYPos() <= 0)
+        {
+            myPlayer.setYPos(0);
+        }
+
+        for (Player otherPlayer : otherPlayers.values()) {
+            if (otherPlayer.getYPos() <= 0)
+            {
+                otherPlayer.setYPos(0);
+            }
+        }
+    }
+
+    public void animateGoal(){
+        // Update animation every 70ms
+        if (goalAnimationTime >= 200)
+        {
+            goal.animate();
+            goalAnimationTime = 0;
+        }
+    }
+
     public void handleHorizontalMovement(){
         // Handle horizontal movement
         if (myPlayer.isMovingLeft()) myPlayer.setXPos(myPlayer.getXPos() - myPlayer.getXSpeed());
@@ -749,7 +778,7 @@ public class GameController implements ActionListener, KeyListener {
         this.towerWallStart = (tileMap.getMapHeight()-9)* tileMap.getTileHeight();
 
         this.gamePanel.setTileMap(tileMap);
-        goal = new Rectangle( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 30, 30, 30);
+        goal = new Goal( platforms.getLast().getXPos() + 15, platforms.getLast().getYPos() - 32);
         updateGamePanelComponents();
         this.gamePanel.setGoal(goal);
         this.gamePanel.setReady(true);
