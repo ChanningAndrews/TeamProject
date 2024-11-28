@@ -1,39 +1,37 @@
 package ClientSide;
 
-public class CreateAccountData {
+import java.io.Serializable;
 
-    // Fields
+public class CreateAccountData implements Serializable
+{
+    // Private data fields for the username and password.
     private String username;
     private String password;
 
-    // Constructor
-    public CreateAccountData(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    // Methods
-    public String getUsername() {
+    // Getters for the username and password.
+    public String getUsername()
+    {
         return username;
     }
-
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
-    public boolean isValid() {
-        // Check if username and password meet basic validity criteria
-        return username != null && !username.isEmpty() && password != null && !password.isEmpty();
+    // Setters for the username and password.
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 
-    public boolean passwordMatch(String confirmPassword) {
-        // Check if the provided confirm password matches the password
-        return password != null && password.equals(confirmPassword);
-    }
-
-    public void assignAvatar() {
-        // Logic to assign an avatar to the user account
-        System.out.println("Assigning avatar...");
-        // Implement further avatar assignment logic as needed
+    // Constructor that initializes the username and password.
+    public CreateAccountData(String username, String password)
+    {
+        setUsername(username);
+        setPassword(password);
     }
 }

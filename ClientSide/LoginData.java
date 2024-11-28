@@ -1,28 +1,38 @@
 package ClientSide;
 
-public class LoginData {
+import java.io.Serializable;
 
-    // Fields
+public class LoginData implements Serializable
+{
+    // Private data fields for the username and password.
     private String username;
     private String password;
 
-    // Methods
-    public String getUsername() {
+    // Getters for the username and password.
+    public String getUsername()
+    {
         return username;
     }
-
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
-    public boolean isValid() {
-        // Check if username and password are not null or empty
-        return username != null && !username.isEmpty() && password != null && !password.isEmpty();
+    // Setters for the username and password.
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 
-    public void clear() {
-        username = null;
-        password = null;
+    // Constructor that initializes the username and password.
+    public LoginData(String username, String password)
+    {
+        setUsername(username);
+        setPassword(password);
     }
 }
 

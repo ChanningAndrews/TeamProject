@@ -11,7 +11,6 @@ public class GameClient extends AbstractClient {
     //controllers
     private CreateAccountControl createAccountController;
     private LoginControl loginController;
-    private LobbyControl lobbyController;
     private GameController gameController;
 
     private TileMap tileMap;
@@ -23,6 +22,19 @@ public class GameClient extends AbstractClient {
 
 
     private boolean connectionSetUpOver = false;
+
+    // private data fields for storing GUI controllers
+    private LoginControl loginControl;
+    private CreateAccountControl createAccountControl;
+
+    public void setLoginControl(LoginControl loginControl)
+    {
+        this.loginControl = loginControl;
+    }
+    public void setCreateAccountControl(CreateAccountControl createAccountControl)
+    {
+        this.createAccountControl = createAccountControl;
+    }
 
     public GameClient(String host, int port) {
         super(host, port);
@@ -599,10 +611,6 @@ public class GameClient extends AbstractClient {
 
     public void setLoginController(LoginControl loginController){
         this.loginController = loginController;
-    }
-
-    public void setLobbyController(LobbyControl lobbyController){
-        this.lobbyController = lobbyController;
     }
 
     public void setGameController(GameController gameController){
