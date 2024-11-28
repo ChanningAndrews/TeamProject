@@ -3,6 +3,8 @@ package ClientSide;
 import ocsf.client.*;
 import CoreGame.*;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ public class GameClient extends AbstractClient {
     private CreateAccountControl createAccountController;
     private LoginControl loginController;
     private GameController gameController;
+    private JPanel container;
 
     private TileMap tileMap;
     TwoPlayerTesting gamePanel = null;
@@ -58,11 +61,15 @@ public class GameClient extends AbstractClient {
     @Override
     protected void handleMessageFromServer(Object msg) {
 
-
-
         if(msg instanceof String) {
             String message = (String)msg;
 
+            if (message.equals("START_GAME")){
+                System.out.println("Starting game");
+
+                CardLayout cardLayout = (CardLayout)container.getLayout();
+                cardLayout.show(container, "7");
+            }
 
             if(message.startsWith("PlayerId")) {
                 Player tempPlayer = fromString(message);

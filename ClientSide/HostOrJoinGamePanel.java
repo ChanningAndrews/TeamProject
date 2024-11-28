@@ -11,7 +11,6 @@ public class HostOrJoinGamePanel extends JPanel {
 
     private double scaleF = 1.5;
     private BufferedImage background;
-    private BufferedImage title;
 
     private JButton host;
     private JButton join;

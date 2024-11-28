@@ -3,7 +3,6 @@ package ClientSide;
 import CoreGame.GameController;
 import CoreGame.GameMap;
 import CoreGame.GamePanel;
-import CoreGame.SinglePlayerTesting;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,11 +37,13 @@ public class GameGUI extends JFrame{
         HostControl hc = new HostControl(container, client);
         JoinControl jc = new JoinControl(container, client);
         GameController gc = new GameController(container, client);
+        EndControl ec = new EndControl(container, client);
 
         // set the controllers that will be communicating with the client in the client
         client.setLoginControl(lc);
         client.setCreateAccountControl(cac);
         client.setGameController(gc);
+        //cleint.setEndControl(ec);
 
         // open connection to server
         //the client should automatically pass the map it will have created after a successful connection to the server to the gameController
@@ -55,6 +56,7 @@ public class GameGUI extends JFrame{
         JPanel view5 = new HostPanel(hc);
         JPanel view6 = new JoinPanel(jc);
         JPanel view7 = new GamePanel(gc);
+        JPanel view8 = new EndPanel(ec, gc);
 
         while(true) {
             if(client.isConnectionSetUpOver()) {
@@ -73,6 +75,7 @@ public class GameGUI extends JFrame{
         container.add(view5, "5");
         container.add(view6, "6");
         container.add(view7,"7");
+        container.add(view8, "8");
 
         // show the initial view in the card layout.
         cardLayout.show(container, "1");

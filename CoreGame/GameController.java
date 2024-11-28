@@ -529,6 +529,7 @@ public class GameController implements ActionListener, KeyListener {
     public void handleCollisionWithGoal(){
         if(new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal) ){
             gameWon = true;
+            myPlayer.hasReachedGoal();
         }
 
         for(Player otherPlayer: otherPlayers.values()){

@@ -1,6 +1,7 @@
 package ServerSide;
 
 import CoreGame.*;
+import ClientSide.*;
 
 import ocsf.server.*;
 
@@ -167,8 +168,12 @@ public class GameServer extends AbstractServer {
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
+        if (msg instanceof JoinData){
+            JoinData data = (JoinData) msg;
+            System.out.println("User joined with IP: " + data.getIp());
 
-        //System.out.println("got something");
+            sendToAllClients("START GAME");
+        }
 
         if (msg instanceof String) {
             //System.out.println("got a string");
