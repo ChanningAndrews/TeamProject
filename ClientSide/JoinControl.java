@@ -4,6 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class JoinControl implements ActionListener {
 
@@ -24,26 +26,29 @@ public class JoinControl implements ActionListener {
             System.out.println("ip submitted!");
             JoinData data = new JoinData(JoinPanel.getIp());
 
-            /*
-
             // Check the validity of the information locally first.
             if (data.getIp().equals(""))
             {
                 displayError("You must enter Host IP.");
                 return;
             }
+            else if (!isValidIP(data.getIp())){
+                displayError("IP address is not valid.");
+                return;
+            }
 
-            // Submit the login information to the server.
             try
             {
                 client.sendToServer(data);
+                client.updateHost(data.getIp());
+
+                CardLayout cardLayout = (CardLayout)container.getLayout();
+                cardLayout.show(container, "7");
             }
             catch (IOException e)
             {
                 displayError("Error connecting to the server.");
             }
-
-             */
 
         }
         else if (command.equals("Cancel")) {
@@ -51,6 +56,21 @@ public class JoinControl implements ActionListener {
             cardLayout.show(container, "4");
         }
 
+    }
+
+    public void displayError(String error)
+    {
+        JoinPanel joinPanel = (JoinPanel)container.getComponent(1);
+        joinPanel.setError(error);
+    }
+
+    public static boolean isValidIP(String ip) {
+        try {
+            InetAddress address = InetAddress.getByName(ip);
+            return ip.equals(address.getHostAddress());
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 
 }

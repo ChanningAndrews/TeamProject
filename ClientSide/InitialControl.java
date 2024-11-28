@@ -38,9 +38,9 @@ public class InitialControl implements ActionListener{
             cardLayout.show(container, "3");
         }
         else if (command.equals("test")){
-            HostOrJoinGamePanel hostOrJoinGamePanel = (HostOrJoinGamePanel)container.getComponent(3);
+            HostOrJoinGamePanel hostOrJoinGamePanel = (HostOrJoinGamePanel)container.getComponent(6);
             CardLayout cardLayout = (CardLayout)container.getLayout();
-            cardLayout.show(container, "4");
+            cardLayout.show(container, "7");
         }
     }
 

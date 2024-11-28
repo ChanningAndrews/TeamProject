@@ -27,6 +27,8 @@ public class GameClient extends AbstractClient {
     private LoginControl loginControl;
     private CreateAccountControl createAccountControl;
 
+    private String host;
+
     public void setLoginControl(LoginControl loginControl)
     {
         this.loginControl = loginControl;
@@ -38,9 +40,19 @@ public class GameClient extends AbstractClient {
 
     public GameClient(String host, int port) {
         super(host, port);
+        this.host = host;
         platforms = new ArrayList<>();
         spikes = new ArrayList<>();
         collectibles = new ArrayList<>();
+    }
+
+    public void updateHost(String newHost){
+        this.host = newHost;
+        super.setHost(newHost);
+    }
+
+    public String getCurrentHost(){
+        return host;
     }
 
     @Override

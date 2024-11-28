@@ -23,6 +23,11 @@ public class JoinPanel extends JPanel {
         return ipField.getText();
     }
 
+    public void setError(String error)
+    {
+        errorLabel.setText(error);
+    }
+
     public JoinPanel(JoinControl jc) throws IOException {
 
         this.setPreferredSize(new Dimension(1080,624));
