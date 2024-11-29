@@ -19,7 +19,7 @@ public class JoinPanel extends JPanel {
     private Color purpleD = new Color(59, 5, 58);
     private Color purpleL = new Color(152, 129, 137);
 
-    public static String getIp() {
+    public static String getHostPassword() {
         return ipField.getText();
     }
 

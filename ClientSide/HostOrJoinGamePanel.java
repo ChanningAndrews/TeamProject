@@ -15,6 +15,7 @@ public class HostOrJoinGamePanel extends JPanel {
     private JButton host;
     private JButton join;
     private JButton logout;
+    private JLabel errorLabel;
 
     // constructor
     public HostOrJoinGamePanel(HostOrJoinGameControl hj) throws IOException {
@@ -61,6 +62,10 @@ public class HostOrJoinGamePanel extends JPanel {
 
         // ---------------------------------------------------
 
+        // error label
+        errorLabel = new JLabel("", JLabel.CENTER);
+        errorLabel.setForeground(Color.RED);
+
         // Create buttons with resized images
         host = createCustomButton(hostButtonImage);
         join = createCustomButton(joinButtonImage);
@@ -77,6 +82,7 @@ public class HostOrJoinGamePanel extends JPanel {
         this.add(host);
         this.add(join);
         this.add(logout);
+        this.add(errorLabel);
     }
 
     private JButton createCustomButton(BufferedImage buttonImage) {
@@ -112,5 +118,9 @@ public class HostOrJoinGamePanel extends JPanel {
             int logoutY = joinY + join.getHeight();
             logout.setBounds(logoutX, logoutY, logout.getWidth(), logout.getHeight());
         }
+    }
+
+    public void setError(String error_message){
+        this.errorLabel.setText(error_message);
     }
 }

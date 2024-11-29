@@ -14,6 +14,9 @@ public class GameClient extends AbstractClient {
     private CreateAccountControl createAccountController;
     private LoginControl loginController;
     private GameController gameController;
+    private HostOrJoinGameControl hostOrJoinControl;
+    private JoinControl joinControl;
+    private HostControl hostControl;
     private JPanel container;
 
     private TileMap tileMap;
@@ -41,6 +44,18 @@ public class GameClient extends AbstractClient {
         this.createAccountControl = createAccountControl;
     }
 
+    public void setHostOrJoinControl(HostOrJoinGameControl hostOrJoinControl){
+        this.hostOrJoinControl  = hostOrJoinControl;
+    }
+
+    public void setJoinControl(JoinControl joinControl){
+        this.joinControl = joinControl;
+    }
+
+    public void setHostControl(HostControl hostControl){
+        this.hostControl = hostControl;
+    }
+
     public GameClient(String host, int port) {
         super(host, port);
         this.host = host;
@@ -63,12 +78,23 @@ public class GameClient extends AbstractClient {
 
         if(msg instanceof String) {
             String message = (String)msg;
+            //System.out.println("message: " + message);
 
-            if (message.equals("START_GAME")){
-                System.out.println("Starting game");
+            if(message.equals("GAME_START_HOST")){
+                this.hostControl.gameStart();
+            }
+            else if(message.equals("GAME_START_JOIN")){
+                this.joinControl.gameStart();
+            }
+            else if(message.startsWith("HOST_PERMISSION_DENIED")){
+                String[] fields = message.split("#");
 
-                CardLayout cardLayout = (CardLayout)container.getLayout();
-                cardLayout.show(container, "7");
+                this.hostOrJoinControl.hostRequestDenied(fields[1]);
+            }
+            else if(message.startsWith("HOST_PERMISSION_GRANTED")){
+                String[] fields = message.split("#");
+
+                this.hostOrJoinControl.hostRequestGranted(fields[1]);
             }
 
             if(message.startsWith("PlayerId")) {

@@ -18,7 +18,7 @@ import javax.swing.*;
 
 //all the logic of the game is handled here
 public class GameController implements ActionListener, KeyListener {
-    private Timer gameLoopTimer;
+    private static Timer gameLoopTimer;
     private GameClient client;
     private JPanel container;
     private GamePanel gamePanel;
@@ -782,7 +782,7 @@ public class GameController implements ActionListener, KeyListener {
         updateGamePanelComponents();
         this.gamePanel.setGoal(goal);
         this.gamePanel.setReady(true);
-        startGameTimer();
+        //startGameTimer();
     }
 
     public void addPlatform(Platform platform){
@@ -816,12 +816,12 @@ public class GameController implements ActionListener, KeyListener {
         this.gamePanel = gamePanel;
     }
 
-    public void startGameTimer(){
-        this.gameLoopTimer.start();
+    public static void startGameTimer(){
+        gameLoopTimer.start();
     }
 
-    public void stopGameTimer(){
-        this.gameLoopTimer.stop();
+    public static void stopGameTimer(){
+        gameLoopTimer.stop();
     }
 
     public Player getPlayer(){

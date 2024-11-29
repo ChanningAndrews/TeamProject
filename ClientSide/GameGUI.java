@@ -42,7 +42,10 @@ public class GameGUI extends JFrame{
         // set the controllers that will be communicating with the client in the client
         client.setLoginControl(lc);
         client.setCreateAccountControl(cac);
+        client.setHostOrJoinControl(hj);
         client.setGameController(gc);
+        client.setJoinControl(jc);
+        client.setHostControl(hc);
         //cleint.setEndControl(ec);
 
         // open connection to server
@@ -85,7 +88,7 @@ public class GameGUI extends JFrame{
 
         // show the JFrame.
         this.setSize(1080, 624);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
     }

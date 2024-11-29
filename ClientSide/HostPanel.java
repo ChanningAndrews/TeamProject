@@ -16,6 +16,9 @@ public class HostPanel extends JPanel {
 
     private Color purpleD = new Color(59, 5, 58);
 
+    private String uniqueSessionPassword;
+    private JLabel hostPasswordLabel;
+
     public HostPanel(HostControl hc) throws IOException {
         this.setPreferredSize(new Dimension(1080,624));
         this.setLayout(new GridBagLayout());
@@ -62,7 +65,12 @@ public class HostPanel extends JPanel {
         String user_ip = InetAddress.getLocalHost().getHostAddress();
 
         // ip label
-        JLabel ip_label = new JLabel(user_ip);
+        JLabel ip_label = new JLabel();
+
+        hostPasswordLabel = new JLabel();
+        hostPasswordLabel.setForeground(purpleD);
+        hostPasswordLabel.setFont(new Font("Arial", Font.BOLD, 48));
+
         ip_label.setForeground(purpleD);
         ip_label.setFont(new Font("Arial", Font.BOLD, 48));
         // info label
@@ -71,7 +79,7 @@ public class HostPanel extends JPanel {
 
         labelPanel.setOpaque(false);
 
-        labelPanel.add(ip_label);
+        labelPanel.add(hostPasswordLabel);
         labelPanel.add(infoLabel);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -107,6 +115,11 @@ public class HostPanel extends JPanel {
             cancel.setBounds(cancelX, cancelY, cancel.getWidth(), cancel.getHeight());
         }
 
+    }
+
+    //is called by the server
+    public void setUniqueSessionPassword(String password){
+        this.hostPasswordLabel.setText(password);
     }
 
 }

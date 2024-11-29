@@ -1,5 +1,7 @@
 package ClientSide;
 
+import CoreGame.GameController;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -24,6 +26,13 @@ public class HostControl implements ActionListener {
             cardLayout.show(container, "4");
         }
 
+    }
+
+    public void gameStart(){
+        CardLayout cardLayout = (CardLayout)container.getLayout();
+        cardLayout.show(container, "7");
+
+        GameController.startGameTimer();
     }
 
 }

@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class JoinData implements Serializable {
 
-    private String ip;
+    private String hostPassword;
 
-    public String getIp(){
-        return ip;
+    public String getHostPassword(){
+        return hostPassword;
     }
 
-    public void setIp(String ip){
-        this.ip = ip;
+    public void setHostPassword(String password){
+        this.hostPassword = password;
     }
 
-    public JoinData(String ip){
-        setIp(ip);
+    public JoinData(String password){
+        setHostPassword(password);
     }
 }

@@ -1,5 +1,7 @@
 package ClientSide;
 
+import CoreGame.GameController;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -24,26 +26,26 @@ public class JoinControl implements ActionListener {
 
         if (command.equals("Submit")) {
             System.out.println("ip submitted!");
-            JoinData data = new JoinData(JoinPanel.getIp());
 
-            // Check the validity of the information locally first.
-            if (data.getIp().equals(""))
-            {
-                displayError("You must enter Host IP.");
-                return;
-            }
-            else if (!isValidIP(data.getIp())){
-                displayError("IP address is not valid.");
-                return;
-            }
+            JoinData data = new JoinData(JoinPanel.getHostPassword());
+
+//            // Check the validity of the information locally first.
+//            if (data.getIp().equals(""))
+//            {
+//                displayError("You must enter Host IP.");
+//                return;
+//            }
+//            else if (!isValidIP(data.getIp())){
+//                displayError("IP address is not valid.");
+//                return;
+//            }
 
             try
             {
-                client.sendToServer(data);
-                client.updateHost(data.getIp());
-
-                CardLayout cardLayout = (CardLayout)container.getLayout();
-                cardLayout.show(container, "7");
+                client.sendToServer("JOIN_REQUEST" + "#" + JoinPanel.getHostPassword());
+                //client.updateHost(data.getIp());
+//                CardLayout cardLayout = (CardLayout)container.getLayout();
+//                cardLayout.show(container, "7");
             }
             catch (IOException e)
             {
@@ -71,6 +73,13 @@ public class JoinControl implements ActionListener {
         } catch (UnknownHostException e) {
             return false;
         }
+    }
+
+    public void gameStart(){
+        CardLayout cardLayout = (CardLayout)container.getLayout();
+        cardLayout.show(container, "7");
+
+        GameController.startGameTimer();
     }
 
 }
