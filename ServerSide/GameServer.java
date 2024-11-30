@@ -1,6 +1,7 @@
 package ServerSide;
 
 import CoreGame.*;
+import ClientSide.*;
 
 import ocsf.server.*;
 
@@ -23,6 +24,9 @@ public class GameServer extends AbstractServer {
     private ArrayList<Platform> platforms;
     private ArrayList<Obstacle> spikes;
 
+    private String hostSessionPassword;
+    private HashMap<Long, String> hostInformation;
+
 //------------constructor---------------------------------------
     public GameServer(int port) {
         super(port);
@@ -33,6 +37,8 @@ public class GameServer extends AbstractServer {
         collectibles = new ArrayList<>();
         platforms = new ArrayList<>();
         spikes = new ArrayList<>();
+
+        hostSessionPassword = "";
 
         generatePlatformsAndTraps(900, 216, 1848, 80 , 66, 15, platforms );
 
@@ -167,14 +173,69 @@ public class GameServer extends AbstractServer {
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
+        if (msg instanceof JoinData){
+            JoinData data = (JoinData) msg;
+            System.out.println("User joined with IP: " + data.getHostPassword());
 
-        //System.out.println("got something");
+            sendToAllClients("START GAME");
+        }
 
         if (msg instanceof String) {
-            //System.out.println("got a string");
+
+            System.out.println("got a string");
             String message = (String)msg;
 
-            if(message.startsWith("PlayerId")) {
+            if(message.equals("HOST_REQUEST")) {
+                try {
+                    client.sendToClient(respondToHostRequest());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else if(message.startsWith("JOIN_REQUEST")){
+                System.out.println("Got a join request");
+
+                String[] fields = message.split("#");
+                String response = respondToJoinRequest(fields[1]);
+
+                if(response.startsWith("GAME_START")){
+                    String suffix;
+
+                    for (Thread clientThread : getClientConnections()) {
+                        ConnectionToClient tempClient = (ConnectionToClient) clientThread;
+
+                        // Skip the sender
+                        if (tempClient != client) {
+                            suffix = "_JOIN";
+
+                            try {
+                                tempClient.sendToClient(response+suffix);
+                            } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            } // Send the message to other clients
+                        }
+                        else{
+                            suffix = "_HOST";
+                            try {
+                                tempClient.sendToClient(response+suffix);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                    }
+                }
+                else{
+                    try {
+                        client.sendToClient(response);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            else if(message.startsWith("PlayerId")) {
                 //System.out.println("got a player string");
                 Player tempPlayer = fromString(message);
                 //System.out.println("Temp player created from string: " + tempPlayer);
@@ -628,5 +689,73 @@ public class GameServer extends AbstractServer {
             System.out.println("Error with playing sound.");
             ex.printStackTrace();
         }
+    }
+
+    //this method is called whenever a HOST_REQUEST is sent from the client.
+    //this method determines whether to grant host permission to this client
+    //by checking if there is already a hostSessionPassword stored in the server,
+    //which would mean that there is already a host. In that case, the request will be
+    //denied. Otherwise, the request will be granted. Note that the response is returned in the form of a String
+    private String respondToHostRequest(){
+        String response;
+        final String DELIMITER = "#";
+
+        if(hostSessionPassword.isEmpty()){
+            //grant permission
+
+            //generate session password
+            generateSessionPassword();
+
+            //return the granted permission to the requesting client
+            response = "HOST_PERMISSION_GRANTED" + DELIMITER + hostSessionPassword;
+        }
+        else{ //there is already a client currently hosting
+            response = "HOST_PERMISSION_DENIED" + DELIMITER + "There is already a host. Please try joining instead or try again later.";
+            //return the denied permission to the requesting client
+        }
+
+        return response;
+    }
+
+    private void generateSessionPassword(){
+        final String PREFIX = "UCA";
+        final String DELIMITER = "-";
+
+        Random random = new Random();
+
+        int middle_section = random.nextInt(1000);
+        int final_section = random.nextInt(1000);
+
+        StringBuilder middle = new StringBuilder(Integer.toString(middle_section));
+        StringBuilder last = new StringBuilder(Integer.toString(final_section));
+
+        while(middle.length() < 3 && last.length() < 3) {
+            if (middle.length() < 3) {
+                middle.insert(0, "0");
+            }
+
+            if(last.length() < 3){
+                last.insert(0, "0");
+            }
+        }
+
+        hostSessionPassword = (PREFIX + DELIMITER + middle + DELIMITER + last);
+    }
+
+    private String respondToJoinRequest(String providedPassword){
+        String response;
+        if(hostSessionPassword.isEmpty()){
+            response = "JOINT_PERMISSION_DENIED" + "#" + "There are currently no hosts for the session. Please try hosting instead or try again later.";
+        }
+        else{
+            if(providedPassword.equals(hostSessionPassword)){
+                response = "GAME_START";
+            }
+            else{
+                response = "JOIN_PERMISSION_DENIED" + "#" + "Invalid Password";
+            }
+        }
+
+        return response;
     }
 }

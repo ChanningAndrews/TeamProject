@@ -3,6 +3,8 @@ package ClientSide;
 import ocsf.client.*;
 import CoreGame.*;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +13,11 @@ public class GameClient extends AbstractClient {
     //controllers
     private CreateAccountControl createAccountController;
     private LoginControl loginController;
-    private LobbyControl lobbyController;
     private GameController gameController;
+    private HostOrJoinGameControl hostOrJoinControl;
+    private JoinControl joinControl;
+    private HostControl hostControl;
+    private JPanel container;
 
     private TileMap tileMap;
     TwoPlayerTesting gamePanel = null;
@@ -24,21 +29,73 @@ public class GameClient extends AbstractClient {
 
     private boolean connectionSetUpOver = false;
 
+    // private data fields for storing GUI controllers
+    private LoginControl loginControl;
+    private CreateAccountControl createAccountControl;
+
+    private String host;
+
+    public void setLoginControl(LoginControl loginControl)
+    {
+        this.loginControl = loginControl;
+    }
+    public void setCreateAccountControl(CreateAccountControl createAccountControl)
+    {
+        this.createAccountControl = createAccountControl;
+    }
+
+    public void setHostOrJoinControl(HostOrJoinGameControl hostOrJoinControl){
+        this.hostOrJoinControl  = hostOrJoinControl;
+    }
+
+    public void setJoinControl(JoinControl joinControl){
+        this.joinControl = joinControl;
+    }
+
+    public void setHostControl(HostControl hostControl){
+        this.hostControl = hostControl;
+    }
+
     public GameClient(String host, int port) {
         super(host, port);
+        this.host = host;
         platforms = new ArrayList<>();
         spikes = new ArrayList<>();
         collectibles = new ArrayList<>();
     }
 
+    public void updateHost(String newHost){
+        this.host = newHost;
+        super.setHost(newHost);
+    }
+
+    public String getCurrentHost(){
+        return host;
+    }
+
     @Override
     protected void handleMessageFromServer(Object msg) {
 
-
-
         if(msg instanceof String) {
             String message = (String)msg;
+            //System.out.println("message: " + message);
 
+            if(message.equals("GAME_START_HOST")){
+                this.hostControl.gameStart();
+            }
+            else if(message.equals("GAME_START_JOIN")){
+                this.joinControl.gameStart();
+            }
+            else if(message.startsWith("HOST_PERMISSION_DENIED")){
+                String[] fields = message.split("#");
+
+                this.hostOrJoinControl.hostRequestDenied(fields[1]);
+            }
+            else if(message.startsWith("HOST_PERMISSION_GRANTED")){
+                String[] fields = message.split("#");
+
+                this.hostOrJoinControl.hostRequestGranted(fields[1]);
+            }
 
             if(message.startsWith("PlayerId")) {
                 Player tempPlayer = fromString(message);
@@ -599,10 +656,6 @@ public class GameClient extends AbstractClient {
 
     public void setLoginController(LoginControl loginController){
         this.loginController = loginController;
-    }
-
-    public void setLobbyController(LobbyControl lobbyController){
-        this.lobbyController = lobbyController;
     }
 
     public void setGameController(GameController gameController){

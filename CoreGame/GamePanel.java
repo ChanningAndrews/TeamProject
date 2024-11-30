@@ -14,7 +14,7 @@ public class GamePanel extends JPanel {
     private ArrayList<Obstacle> spikes;
     private ArrayList<Collectible> collectibles;
     HashMap<Integer, Player> otherPlayers;
-    private Rectangle goal;
+    private Goal goal;
     private int cameraY;
     private double scaleFactor = 1.5;
 
@@ -22,6 +22,8 @@ public class GamePanel extends JPanel {
     private boolean go = false;
 
     private boolean gameWon = false;
+
+    private JPanel container;
 
 
     //-----------constructor------------------------------------------------------------
@@ -39,6 +41,8 @@ public class GamePanel extends JPanel {
         this.setFocusable(true);
 
         gameController.setGamePanel(this);
+
+        this.container = container;
     }
 
     //-------------setters to update the game components of the panel (from controller)----------------------
@@ -79,7 +83,11 @@ public class GamePanel extends JPanel {
         g2d.translate(0, -cameraY);
 
         if(gameWon){
-            displayWinMessage(g2d);
+
+            CardLayout cardLayout = (CardLayout)container.getLayout();
+            cardLayout.show(container, "4");
+
+            //displayWinMessage(g2d);
         }
         else {
             if (this.tileMap != null) {
@@ -92,8 +100,7 @@ public class GamePanel extends JPanel {
                 displayDebugInfo(g2d);
 
                 //draw goal
-                g2d.setColor(Color.GREEN);
-                g2d.fillOval(goal.x, goal.y, 30, 30);
+                renderGoal(g2d);
 
                 if (ready) {
                     displayReady(g2d);
@@ -102,6 +109,7 @@ public class GamePanel extends JPanel {
                 if (go) {
                     displayStartMessage(g2d);
                 }
+
             } else {
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Arial", Font.BOLD, 12));
@@ -225,6 +233,12 @@ public class GamePanel extends JPanel {
         }
     }
 
+    public void renderGoal(Graphics g2d){
+        //draw goal
+        g2d.drawImage(Goal.getGoalImage(), goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight(), null);
+
+    }
+
     public void renderPlayer(Graphics g2d){
         //flip the player's sprite appropriately based on which direction the avatar is facing
         if (myPlayer.isFacingLeft()) {
@@ -283,7 +297,7 @@ public class GamePanel extends JPanel {
         return this.go;
     }
 
-    public void setGoal(Rectangle goal){
+    public void setGoal(Goal goal){
         this.goal = goal;
     }
 
