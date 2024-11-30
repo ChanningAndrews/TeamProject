@@ -71,7 +71,7 @@ public class GameController implements ActionListener, KeyListener {
     private long elapsedTime;
 
     private long readyTime = 0;
-    private long goTime;
+    private long goTime = 0;
     private long goalAnimationTime;
 
     private boolean gameStarted = false;
@@ -125,6 +125,16 @@ public class GameController implements ActionListener, KeyListener {
             lastTimestamp = currentTime;
 
             if (gameStarted) {
+
+                if(this.gamePanel.getGo()){
+                    if(goTime >= 2000){
+                        this.gamePanel.setGo(false);
+                    }
+                    else{
+                        goTime += elapsedTime;
+                    }
+                }
+
                 updateCharacterAnimation();
 
         /*
@@ -239,6 +249,8 @@ public class GameController implements ActionListener, KeyListener {
                     this.gamePanel.setGo(true);
                     gameStarted = true;
                 }
+
+
 
 
             }
