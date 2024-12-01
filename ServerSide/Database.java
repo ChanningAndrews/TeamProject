@@ -6,7 +6,7 @@ import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class DatabaseFile {
+public class Database {
 
     // Fields
     private HashMap<String, User> usersCache; // Cache for loaded users
@@ -20,7 +20,7 @@ public class DatabaseFile {
     private static final String DELETE_USER = "DELETE FROM users WHERE username = ?";
 
     // Constructor
-    public DatabaseFile() {
+    public Database() {
         usersCache = new HashMap<>();
         connectToDatabase();
     }
