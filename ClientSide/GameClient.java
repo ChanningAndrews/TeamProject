@@ -96,6 +96,11 @@ public class GameClient extends AbstractClient {
 
                 this.hostOrJoinControl.hostRequestGranted(fields[1]);
             }
+            else if(message.startsWith("INITIAL_POSITION")){
+                String[] fields = message.split("#");
+
+                this.gameController.getPlayer().setXPos(Integer.parseInt(fields[1]));
+            }
 
             if(message.startsWith("PlayerId")) {
                 Player tempPlayer = fromString(message);

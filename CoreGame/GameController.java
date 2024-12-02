@@ -73,6 +73,8 @@ public class GameController implements ActionListener, KeyListener {
     private long readyTime = 0;
     private long goTime = 0;
     private long goalAnimationTime;
+    private long freezeTime;
+    private long boostTime;
 
     private boolean gameStarted = false;
 
@@ -565,7 +567,38 @@ public class GameController implements ActionListener, KeyListener {
     }
 
     public void handleCollisionWithOtherPlayers(){
+        ArrayList<Player> allPlayers = new ArrayList<>();
+        allPlayers.add(myPlayer);
+        allPlayers.addAll(otherPlayers.values());
+        Rectangle playerCollisionBox;
+        Rectangle otherPlayerCollisionBox;
 
+        for(Player player: allPlayers){
+            playerCollisionBox = new Rectangle(player.getXPos(), player.getYPos(), player.getCharacterWidth(), player.getCharacterHeight());
+
+            for(Player otherPlayer:allPlayers){
+
+                if(!otherPlayer.equals(player)){
+                    otherPlayerCollisionBox = new Rectangle(otherPlayer.getXPos(), otherPlayer.getYPos(), otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight());
+
+                    if((playerCollisionBox.intersects(otherPlayerCollisionBox))){
+                        if(player.isMoving()) {
+
+                            if(player.isMovingLeft()) {
+                                player.setXPos(player.getXPos() + player.getXSpeed());
+                            }
+                            else{
+                                player.setXPos(player.getXPos() - player.getXSpeed());
+                            }
+
+
+                        }
+
+                        player.setYPos(player.getYPos() - player.getYSpeed());
+                    }
+                }
+            }
+        }
     }
 
     //---------Boundary Checking----------------------------------------------------

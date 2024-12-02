@@ -26,6 +26,7 @@ public class GameServer extends AbstractServer {
 
     private String hostSessionPassword;
     private HashMap<Long, String> hostInformation;
+    private ArrayList<Integer> playerPositions;
 
 //------------constructor---------------------------------------
     public GameServer(int port) {
@@ -37,6 +38,10 @@ public class GameServer extends AbstractServer {
         collectibles = new ArrayList<>();
         platforms = new ArrayList<>();
         spikes = new ArrayList<>();
+        playerPositions = new ArrayList<>();
+        playerPositions.add(250);
+        playerPositions.add(400);
+        playerPositions.add(600);
 
         hostSessionPassword = "";
 
@@ -150,6 +155,13 @@ public class GameServer extends AbstractServer {
             }
         }
 
+        //SENDING THE POSITION OF THE PLAYER IN THE MAP
+        try {
+            client.sendToClient("INITIAL_POSITION" + "#" + playerPositions.getFirst());
+            this.playerPositions.removeFirst();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         //send a message to the client to let it know that we are done sending the initial setup information
         try {
             client.sendToClient("Initialization done");

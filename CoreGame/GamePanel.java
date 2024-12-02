@@ -213,6 +213,10 @@ public class GamePanel extends JPanel {
         // Draw background, platforms, goal, and player character
         for (Platform platform : platforms) {
             g2d.drawImage(Platform.getPlatformImage(), platform.getXPos(), platform.getYPos(), platform.getWidth(), platform.getHeight(), null);
+
+            //draw the bounding/collision box of each platform. For debugging purposes
+            g2d.setColor(Color.YELLOW);
+            g2d.drawRect(platform.getXPos(), platform.getYPos(), platform.getWidth(), platform.getHeight());
         }
     }
 
@@ -222,6 +226,9 @@ public class GamePanel extends JPanel {
         {
             for (Obstacle spike : spikes) {
                 spike.render(g2d);
+                //draw the bounding/collision box of each platform. For debugging purposes
+                //g2d.setColor(Color.RED);
+                //g2d.drawRect(spike.getXPos(), spike.getYPos(), spike.getWidth(), spike.getHeight());
             }
         }
     }
@@ -230,12 +237,18 @@ public class GamePanel extends JPanel {
         //draw collectibles
         for(Collectible collectible : collectibles){
             g2d.drawImage(collectible.getImage(), collectible.getXPos(), collectible.getYPos(), collectible.getWidth(), collectible.getHeight(), null);
+            //draw the bounding/collision box of each platform. For debugging purposes
+            g2d.setColor(Color.GREEN);
+            g2d.drawRect(collectible.getXPos(), collectible.getYPos(), collectible.getWidth(), collectible.getHeight());
         }
     }
 
     public void renderGoal(Graphics g2d){
         //draw goal
         g2d.drawImage(Goal.getGoalImage(), goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight(), null);
+        //draw the bounding/collision box of each platform. For debugging purposes
+        g2d.setColor(Color.WHITE);
+        g2d.drawRect(goal.getXPos(), goal.getYPos(), goal.getWidth(), goal.getHeight());
 
     }
 
@@ -246,6 +259,9 @@ public class GamePanel extends JPanel {
         } else {
             g2d.drawImage(myPlayer.getCurrentPlayerSprite(), myPlayer.getXPos() + myPlayer.getCharacterWidth(), myPlayer.getYPos(), -myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight(), null);
         }
+        //draw the bounding/collision box of each platform. For debugging purposes
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight());
 
         for (Player otherPlayer : otherPlayers.values()) {
             //System.out.println("Drawing player " + otherPlayer.getId() + " at " + otherPlayer.getPos());
@@ -258,6 +274,10 @@ public class GamePanel extends JPanel {
                 //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
                 g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos() + otherPlayer.getCharacterWidth(), otherPlayer.getYPos(), -otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
             }
+
+            //draw the bounding/collision box of each platform. For debugging purposes
+            g2d.setColor(Color.BLACK);
+            g2d.drawRect(otherPlayer.getXPos(), otherPlayer.getYPos(), otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight());
         }
     }
 
