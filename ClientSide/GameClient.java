@@ -157,6 +157,28 @@ public class GameClient extends AbstractClient {
                 this.connectionSetUpOver = true;
             }
 
+            if(message.equals("CreateAccountSuccessful")){
+                System.out.println("shit worked good job ");
+
+                createAccountControl.createAccountSuccess();
+            }
+
+            if (message.equals("Username has already been selected")){
+                System.out.println("shit busted frfr on g ");
+
+                createAccountControl.displayError("Username has already been selected");
+            }
+
+            if (message.equals("LoginSuccessful")){
+                System.out.println("LoginSuccessfull");
+                loginControl.loginSuccess();
+            }
+
+            if (message.equals("Invalid username or password")){
+                System.out.println("Invalid username or password");
+                loginControl.displayError("Invalid username or password");
+            }
+
         }
 
 
@@ -219,6 +241,8 @@ public class GameClient extends AbstractClient {
         if (msg instanceof HashMap) {
             gamePanel.updatePositions((HashMap<Integer, Player>) msg);
         }
+
+
     }
 
 
@@ -350,35 +374,35 @@ public class GameClient extends AbstractClient {
 
          */
 
-                for(Platform p : platforms){
-                    System.out.println("adding a platform from client to gameController");
-                    gameController.addPlatform(p);
-                }
+        for(Platform p : platforms){
+            System.out.println("adding a platform from client to gameController");
+            gameController.addPlatform(p);
+        }
 
-                System.out.println("All platforms from client copied to the gameController");
+        System.out.println("All platforms from client copied to the gameController");
 
-                for(Obstacle o : spikes){
-                    gameController.addSpike(o);
-                }
+        for(Obstacle o : spikes){
+            gameController.addSpike(o);
+        }
 
-                System.out.println("All spikes from client copied to the gameController");
+        System.out.println("All spikes from client copied to the gameController");
 
-                for(Collectible c : collectibles){
-                    gameController.addCollectible(c);
-                }
-            //TwoPlayerTesting gamePanel = null;
-            try {
-                //gamePanel = new TwoPlayerTesting(gameMap, this);
-                //System.out.println("Sending new player from client, current sprite is: " + gamePanel.getPlayer().getCurrentPlayerSprite());
-                System.out.println("Sending the new player from client");
-                sendToServer(gameController.getPlayer().toString());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        for(Collectible c : collectibles){
+            gameController.addCollectible(c);
+        }
+        //TwoPlayerTesting gamePanel = null;
+        try {
+            //gamePanel = new TwoPlayerTesting(gameMap, this);
+            //System.out.println("Sending new player from client, current sprite is: " + gamePanel.getPlayer().getCurrentPlayerSprite());
+            System.out.println("Sending the new player from client");
+            sendToServer(gameController.getPlayer().toString());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-            System.out.println("setting up the gameController");
-            gameController.setUp(gameMap);
+        System.out.println("setting up the gameController");
+        gameController.setUp(gameMap);
 
 //            javax.swing.JFrame frame = new javax.swing.JFrame("Multiplayer Game");
 //            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
