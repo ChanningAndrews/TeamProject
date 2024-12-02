@@ -35,6 +35,7 @@ public class LoginPanel extends JPanel
         return new String(passwordField.getPassword());
     }
 
+
     // Setter for the error text.
     public void setError(String error)
     {

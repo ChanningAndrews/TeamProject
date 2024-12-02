@@ -34,12 +34,15 @@ public class LoginControl implements ActionListener
         // The Submit button submits the login information to the server.
         else if (command == "Submit")
         {
+            LoginPanel loginPanel = (LoginPanel)container.getComponent(1);;
+            String username = loginPanel.getUsername();
+            String password = loginPanel.getPassword();
             // Get the username and password the user entered.
-            LoginPanel loginPanel = (LoginPanel)container.getComponent(1);
+
             LoginData data = new LoginData(loginPanel.getUsername(), loginPanel.getPassword());
 
             // Check the validity of the information locally first.
-            if (data.getUsername().equals("") || data.getPassword().equals(""))
+            if (username.equals("") || password.equals(""))
             {
                 displayError("You must enter a username and password.");
                 return;
@@ -48,11 +51,11 @@ public class LoginControl implements ActionListener
             // Submit the login information to the server.
             try
             {
-                client.sendToServer(data);
+                client.sendToServer("LoginData"+ "#" + loginPanel.getPassword() + "#" + loginPanel.getUsername());
             }
             catch (IOException e)
             {
-                displayError("Error connecting to the server.");
+                displayError("Error connecting to the server. (LoginControl)");
             }
         }
     }

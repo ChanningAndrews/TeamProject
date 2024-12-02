@@ -27,7 +27,9 @@ public class GameServer extends AbstractServer {
     private String hostSessionPassword;
     private HashMap<Long, String> hostInformation;
 
-//------------constructor---------------------------------------
+    private Database database;
+
+    //------------constructor---------------------------------------
     public GameServer(int port) {
         super(port);
         setTimeout(1000);
@@ -40,7 +42,7 @@ public class GameServer extends AbstractServer {
 
         hostSessionPassword = "";
 
-        generatePlatformsAndTraps(900, 216, 1848, 80 , 66, 15, platforms );
+        generatePlatformsAndTraps(900, 216, 1848, 80, 66, 15, platforms);
 
         /*
 
@@ -109,6 +111,11 @@ public class GameServer extends AbstractServer {
     }
     */
 
+    //setter for the database
+    public void setDatabase(Database database) {
+        this.database = database;
+    }
+
 
     @Override
     protected void clientConnected(ConnectionToClient client) {
@@ -120,7 +127,7 @@ public class GameServer extends AbstractServer {
         client.getInfo("");
 
         String platformString;
-        for (Platform platform : platforms){
+        for (Platform platform : platforms) {
             platformString = platform.toString();
             try {
                 client.sendToClient(platformString);
@@ -130,7 +137,7 @@ public class GameServer extends AbstractServer {
         }
 
         String spikeString;
-        for (Obstacle spike : spikes){
+        for (Obstacle spike : spikes) {
             spikeString = spike.toString();
             try {
                 client.sendToClient(spikeString);
@@ -140,7 +147,7 @@ public class GameServer extends AbstractServer {
         }
 
         String collectibleString;
-        for (Collectible collectible : collectibles){
+        for (Collectible collectible : collectibles) {
             collectibleString = collectible.toString();
             try {
                 System.out.println("Sending collectible to client: " + collectibleString);
@@ -173,7 +180,7 @@ public class GameServer extends AbstractServer {
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
-        if (msg instanceof JoinData){
+        if (msg instanceof JoinData) {
             JoinData data = (JoinData) msg;
             System.out.println("User joined with IP: " + data.getHostPassword());
 
@@ -183,22 +190,21 @@ public class GameServer extends AbstractServer {
         if (msg instanceof String) {
 
             System.out.println("got a string");
-            String message = (String)msg;
+            String message = (String) msg;
 
-            if(message.equals("HOST_REQUEST")) {
+            if (message.equals("HOST_REQUEST")) {
                 try {
                     client.sendToClient(respondToHostRequest());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else if(message.startsWith("JOIN_REQUEST")){
+            } else if (message.startsWith("JOIN_REQUEST")) {
                 System.out.println("Got a join request");
 
                 String[] fields = message.split("#");
                 String response = respondToJoinRequest(fields[1]);
 
-                if(response.startsWith("GAME_START")){
+                if (response.startsWith("GAME_START")) {
                     String suffix;
 
                     for (Thread clientThread : getClientConnections()) {
@@ -209,37 +215,33 @@ public class GameServer extends AbstractServer {
                             suffix = "_JOIN";
 
                             try {
-                                tempClient.sendToClient(response+suffix);
+                                tempClient.sendToClient(response + suffix);
                             } catch (IOException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
                             } // Send the message to other clients
-                        }
-                        else{
+                        } else {
                             suffix = "_HOST";
                             try {
-                                tempClient.sendToClient(response+suffix);
+                                tempClient.sendToClient(response + suffix);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
                         }
 
                     }
-                }
-                else{
+                } else {
                     try {
                         client.sendToClient(response);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-            }
-
-            else if(message.startsWith("PlayerId")) {
+            } else if (message.startsWith("PlayerId")) {
                 //System.out.println("got a player string");
                 Player tempPlayer = fromString(message);
                 //System.out.println("Temp player created from string: " + tempPlayer);
-                if(players.containsKey(tempPlayer.getId())) {
+                if (players.containsKey(tempPlayer.getId())) {
                     System.out.println("Client " + client.getId() + " moved");
                     System.out.println("Client " + client.getId() + " new postions: " + tempPlayer.getPos());
                     for (Thread clientThread : getClientConnections()) {
@@ -248,7 +250,7 @@ public class GameServer extends AbstractServer {
                         // Skip the sender
                         if (tempClient != client) {
                             try {
-                                tempClient.sendToClient((String)msg);
+                                tempClient.sendToClient((String) msg);
                             } catch (IOException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
@@ -267,11 +269,9 @@ public class GameServer extends AbstractServer {
                     //System.out.println("Current sprite of new player: " + newPlayer.getCurrentPlayerSprite());
 
 
-
-
                     //For sending the new player info about all of the existing players
                     for (Player existingPlayer : players.values()) {
-                        if(existingPlayer.getId() != newPlayer.getId()) {
+                        if (existingPlayer.getId() != newPlayer.getId()) {
                             try {
                                 client.sendToClient(message);
                             } catch (IOException e) {
@@ -301,8 +301,52 @@ public class GameServer extends AbstractServer {
                 }
             }
 
+            try {
 
+                if (message.startsWith("LoginData")) {
+
+                    String[] fields = message.split("#");
+                    String password = fields[1];
+                    String username = fields[2];
+
+                    boolean loginSuccess = database.verifyLogin(username, password);
+                    if (loginSuccess) {
+                        client.sendToClient("LoginSuccessful");
+                        System.out.println("Client " + client.getId() + " successfully logged in as " + username + "\n");
+                    } else {
+                        String error = "Invalid username or password";
+                        client.sendToClient(error);
+                        System.out.println("Client " + client.getId() + " failed to log in\n");
+                    }
+                }
+
+
+                if (message.startsWith("CreateAccountData")){
+
+                    String[] fields = message.split("#");
+                    String password = fields[1];
+                    String username = fields[2];
+
+
+                    boolean accountCreated = database.createAccount(username, password);
+                    if (accountCreated) {
+                        client.sendToClient("CreateAccountSuccessful");
+                        System.out.println("Client " + client.getId() + " created a new account as " + username + "\n");
+                    } else {
+                        String error = "Username has already been selected";
+                        client.sendToClient(error);
+                        System.out.println("Client " + client.getId() + " failed to create a new account\n");
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+
+
+
+
 
 
 
@@ -673,6 +717,11 @@ public class GameServer extends AbstractServer {
         GameServer server = new GameServer(port);
 
 
+        //create the database instance
+        Database database = new Database();
+        server.setDatabase(database);
+
+
         try {
             server.listen(); // Start the server
             //System.out.println("Server is running on port " + port);
@@ -683,8 +732,8 @@ public class GameServer extends AbstractServer {
 
 
         try {
-            SoundPlayer audioPlayer = new SoundPlayer();
-            audioPlayer.play();
+           SoundPlayer audioPlayer = new SoundPlayer();
+           audioPlayer.play();
         } catch (Exception ex) {
             System.out.println("Error with playing sound.");
             ex.printStackTrace();
@@ -740,6 +789,7 @@ public class GameServer extends AbstractServer {
         }
 
         hostSessionPassword = (PREFIX + DELIMITER + middle + DELIMITER + last);
+
     }
 
     private String respondToJoinRequest(String providedPassword){
@@ -757,5 +807,8 @@ public class GameServer extends AbstractServer {
         }
 
         return response;
+    }
+    private String respondToCreateAccountData(String Password, String Username){
+     return null;
     }
 }

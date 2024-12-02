@@ -3,6 +3,7 @@ package ClientSide;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class CreateAccountControl implements ActionListener
 {
@@ -16,6 +17,8 @@ public class CreateAccountControl implements ActionListener
         this.container = container;
         this.client = client;
     }
+
+
 
     // Handle button clicks.
     public void actionPerformed(ActionEvent ae)
@@ -33,6 +36,7 @@ public class CreateAccountControl implements ActionListener
         // The Submit button creates a new account.
         else if (command == "Submit")
         {
+            System.out.println("POOP");
             // Get the text the user entered in the three fields.
             CreateAccountPanel createAccountPanel = (CreateAccountPanel)container.getComponent(2);
             String username = createAccountPanel.getUsername();
@@ -57,18 +61,18 @@ public class CreateAccountControl implements ActionListener
             }
 
             // Submit the new account information to the server.
-            /*
-            CreateAccountData data = new CreateAccountData(username, password);
+
+
             try
             {
-                client.sendToServer(data);
+                client.sendToServer("CreateAccountData" + "#" + createAccountPanel.getPassword() + "#" + createAccountPanel.getUsername());
             }
             catch (IOException e)
             {
-                displayError("Error connecting to the server.");
+                displayError("Error connecting to the server.(CreateAccountControl");
             }
 
-             */
+
         }
     }
 

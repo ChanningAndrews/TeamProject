@@ -157,6 +157,28 @@ public class GameClient extends AbstractClient {
                 this.connectionSetUpOver = true;
             }
 
+            if(message.equals("CreateAccountSuccessful")){
+                System.out.println("shit worked good job ");
+
+                createAccountControl.createAccountSuccess();
+            }
+
+            if (message.equals("Username has already been selected")){
+                System.out.println("shit busted frfr on g ");
+
+                createAccountControl.displayError("Username has already been selected");
+            }
+
+            if (message.equals("LoginSuccessful")){
+                System.out.println("LoginSuccessfull");
+                loginControl.loginSuccess();
+            }
+
+            if (message.equals("Invalid username or password")){
+                System.out.println("Invalid username or password");
+                loginControl.displayError("Invalid username or password");
+            }
+
         }
 
 
@@ -219,6 +241,8 @@ public class GameClient extends AbstractClient {
         if (msg instanceof HashMap) {
             gamePanel.updatePositions((HashMap<Integer, Player>) msg);
         }
+
+
     }
 
 
