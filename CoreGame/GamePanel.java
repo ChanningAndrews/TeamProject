@@ -97,7 +97,7 @@ public class GamePanel extends JPanel {
                 renderObstacles(g2d);
                 renderCollectibles(g2d);
                 renderPlayer(g2d);
-                displayDebugInfo(g2d);
+                //displayDebugInfo(g2d);
 
                 //draw goal
                 renderGoal(g2d);
