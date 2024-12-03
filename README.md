@@ -17,12 +17,17 @@ To setup the ASCEND client, follow the steps below.
 Note: Make sure there is a corresponding GameServer running properly before running the RunGameGUI.bat file to avoid errors.
 
 ### Server + DB Setup
+
 The server setup is similar to the client setup but requires you to instantiate a local copy of the database prior to starting the server. The server setup portion utilizes XAMPP to manage the MySQL server.
 ```
 1. Download the latest version of the ASCEND source.
 2. Extract the .ZIP into your desired location for the game.
 3. Launch XAMPP and start your MySQL server.
 4. database part
+ 4.1 - open xammp and run the mysql server
+ 4.2 - navigate to  c:\xampp\mysql\bin in you cmd prompt (cd c:\xampp\mysql\bin)
+ 4.3 - run this statment if you have set up the sql server with student space (mysql -h localhost -u student -p)  password: hello
+ 4.4 - run the gameServer.sql script to create the table
 7. Run RunGameServer.bat from the 'bat_files' directory.
 ```
 ### Connecting to Remote Server/Computer
