@@ -1,7 +1,14 @@
 # ASCEND
  Authors: Channing Andrews, Connor Myers, Markie, Owen Kiilsgard, Fabrice Faustin
 
- Inspired by classic games such as Bomberman and Tanks, ROCKETMAN offers a competitive top-down shooter experience for 2-8 players within a destructible grid based environment. It features fast paced gameplay, a fully fledged lobby system, statistics collection, and a bundled map editor as well.
+ASCEND is a multi-player game that is inspired by 
+the game 'Doodle Jump'. The game involves multiple players who are racing 
+to the top of a map. Players can move left to right and can jump vertically. 
+Players get to the top by jumping on platforms. Players can also obtain 
+collectibles on the way to the top that can be used to attack other players 
+and accelerate them to the top of the map. If a player is the first to the top 
+or is the last player standing, they are the winner
+
 
  ## Installation & Setup
 
