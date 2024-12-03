@@ -24,7 +24,7 @@ The server setup is similar to the client setup but requires you to instantiate 
 3. Launch XAMPP and start your MySQL server.
 4. database part
 7. Run RunGameServer.bat from the 'bat_files' directory.
-
+```
 ### Connecting to Remote Server/Computer
 
 If you want your client session to connect to a server hosted in a different machine, follow these steps:
