@@ -128,6 +128,12 @@ public class GameController implements ActionListener, KeyListener {
             spikeAppearanceTime += elapsedTime;
             goalAnimationTime += elapsedTime;
             lastTimestamp = currentTime;
+            goTime += elapsedTime;
+
+
+            if (goTime >= 3000) {
+                this.gamePanel.setGo(false);
+            }
 
             if(myPlayer.isBoosted()){
                 boostTime += elapsedTime;
