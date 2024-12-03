@@ -34,7 +34,7 @@ The server setup is similar to the client setup but requires you to instantiate 
  4.1 - open xammp and run the mysql server
  4.2 - navigate to  c:\xampp\mysql\bin in you cmd prompt (cd c:\xampp\mysql\bin)
  4.3 - run this statment if you have set up the sql server with student space (mysql -h localhost -u student -p)  password: hello
- 4.4 - run the gameServer.sql script to create the table
+ 4.4 - run the gameServer.sql script to create the table located in the rescources folder 
 7. Run RunGameServer.bat from the 'bat_files' directory.
 ```
 ### Connecting to Remote Server/Computer
