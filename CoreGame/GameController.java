@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,6 +81,10 @@ public class GameController implements ActionListener, KeyListener {
 
     private Goal goal;
 
+    private long freezeTime;
+    private long boostTime;
+
+
     //--------constructor---------------------------------------------
     public GameController(JPanel container, GameClient client){
         System.out.println("Game Controller is constructed.");
@@ -124,6 +129,26 @@ public class GameController implements ActionListener, KeyListener {
             goalAnimationTime += elapsedTime;
             lastTimestamp = currentTime;
 
+            if(myPlayer.isBoosted()){
+                boostTime += elapsedTime;
+                System.out.println("Boost time: " + boostTime);
+                if(boostTime >= 5000){
+                    boostTime = 0;
+                    myPlayer.setBoosted(false);
+                    myPlayer.setXSpeed(5);
+                }
+            }
+
+            if(myPlayer.isFrozen()){
+                freezeTime += elapsedTime;
+                System.out.println("Freeze time: " + freezeTime);
+                if(freezeTime >= 5000){
+                    freezeTime = 0;
+                    myPlayer.setFrozen(false);
+                    myPlayer.setXSpeed(5);
+                }
+            }
+
             if (gameStarted) {
                 updateCharacterAnimation();
 
@@ -167,6 +192,8 @@ public class GameController implements ActionListener, KeyListener {
                 if (this.gamePanel.getReady()) {
                     if (elapsedTime >= 1000000) {
                         readyTime = 0;
+                        freezeTime = 0;
+                        boostTime = 0;
                     } else {
                         readyTime += elapsedTime;
                     }
@@ -178,6 +205,7 @@ public class GameController implements ActionListener, KeyListener {
                     this.gamePanel.setGo(true);
                     gameStarted = true;
                 }
+
 
 
             }
@@ -402,8 +430,9 @@ public class GameController implements ActionListener, KeyListener {
                     myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
                     myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
 
-                if(collectible instanceof BoostCollectible){
+                if(collectible instanceof BoostCollectible) {
                     collectible.applyEffects(myPlayer);
+                    myPlayer.setBoosted(true);
                 }
                 //collectible.applyEffects(myPlayer);
                 iterator.remove(); // Safe removal using the iterator
@@ -420,6 +449,7 @@ public class GameController implements ActionListener, KeyListener {
 
                     if(collectible instanceof FreezeCollectible){
                         collectible.applyEffects(myPlayer);
+                        myPlayer.setFrozen(true);
                     }
                     iterator.remove(); // Safe removal using the iterator
                     break;
@@ -724,6 +754,25 @@ public class GameController implements ActionListener, KeyListener {
 
         otherPlayers.put(newPlayer.getId(), newPlayer);
 
+    }
+
+    public void removePlayer(){
+
+        //System.out.println("Other player was removed");
+        for(Player otherPlayer: otherPlayers.values()){
+            otherPlayers.remove(otherPlayer.getId());
+        }
+
+        myPlayer.setGoalReached(true);
+        stopGameTimer();
+        CardLayout cardLayout = (CardLayout)container.getLayout();
+        EndPanel endPanel = (EndPanel)container.getComponent(7);
+        endPanel.setScreen(myPlayer);
+        cardLayout.show(container, "8");
+
+        this.gamePanel.setOtherPlayers(otherPlayers);
+
+        System.out.println("Other player object: " + otherPlayers);
     }
 
     public void updateOtherPlayer(Player newPlayer) {

@@ -166,6 +166,12 @@ public class GameServer extends AbstractServer {
 
     }
 
+    @Override
+    protected void clientDisconnected(ConnectionToClient client) {
+        System.out.println("client disconnected");
+        sendToAllClients("Player disconnected");
+    }
+
     public void serverStarted() {
         System.out.println("Server started on port " + this.getPort());
     }
@@ -187,9 +193,14 @@ public class GameServer extends AbstractServer {
             sendToAllClients("START GAME");
         }
 
+        if (msg.equals("I'm done")){
+            sendToAllClients("Player disconnected");
+            System.out.println("RIP player");
+        }
+
         if (msg instanceof String) {
 
-            System.out.println("got a string");
+            //System.out.println("got a string");
             String message = (String) msg;
 
             if (message.equals("HOST_REQUEST")) {
@@ -242,8 +253,8 @@ public class GameServer extends AbstractServer {
                 Player tempPlayer = fromString(message);
                 //System.out.println("Temp player created from string: " + tempPlayer);
                 if (players.containsKey(tempPlayer.getId())) {
-                    System.out.println("Client " + client.getId() + " moved");
-                    System.out.println("Client " + client.getId() + " new postions: " + tempPlayer.getPos());
+                    //System.out.println("Client " + client.getId() + " moved");
+                    //System.out.println("Client " + client.getId() + " new postions: " + tempPlayer.getPos());
                     for (Thread clientThread : getClientConnections()) {
                         ConnectionToClient tempClient = (ConnectionToClient) clientThread;
 

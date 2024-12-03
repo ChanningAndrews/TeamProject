@@ -179,6 +179,10 @@ public class GameClient extends AbstractClient {
                 loginControl.displayError("Invalid username or password");
             }
 
+            if (message.equals("Player disconnected")){
+                gameController.removePlayer();
+            }
+
         }
 
 
@@ -254,6 +258,8 @@ public class GameClient extends AbstractClient {
             e.printStackTrace();
         }
     }
+
+
 
     public void connectionException (Throwable exception) {
         System.out.println("Connection Exception Occurred");

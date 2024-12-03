@@ -91,7 +91,23 @@ public class GameGUI extends JFrame{
         //this.setResizable(false);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
+
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                try {
+                    client.sendToServer("I'm done");
+                    client.closeConnection(); // Ensure the client closes the connection
+                    System.out.println("Connection closed successfully.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.exit(0); // Exit the application
+            }
+        });
     }
+
 
     public static void main(String[] args){
         javax.swing.SwingUtilities.invokeLater(() -> {

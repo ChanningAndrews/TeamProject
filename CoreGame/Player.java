@@ -27,6 +27,8 @@ public class Player {
     private boolean facingLeft = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
+    private boolean isBoosted = false;
+    private boolean isFrozen = false;
     private boolean staggered = false;
     private boolean goalReached = false;
 
@@ -196,6 +198,14 @@ public class Player {
         this.isMoving = status;
     }
 
+    public void setBoosted(boolean status){
+        this.isBoosted = status;
+    }
+
+    public void setFrozen(boolean status){
+        this.isFrozen = status;
+    }
+
     public void setId(int id) {
         this.playerId = id;
     }
@@ -272,6 +282,14 @@ public class Player {
     }
 
     public boolean isMovingRight() {return this.movingRight;}
+
+    public boolean isBoosted(){
+        return this.isBoosted;
+    }
+
+    public boolean isFrozen(){
+        return this.isFrozen;
+    }
 
     public boolean hasReachedGoal(){
         return this.goalReached;
