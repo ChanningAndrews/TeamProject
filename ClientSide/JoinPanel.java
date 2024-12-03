@@ -86,7 +86,7 @@ public class JoinPanel extends JPanel {
         errorLabel = new JLabel("", JLabel.CENTER);
         errorLabel.setForeground(Color.RED);
         // info label
-        JLabel infoLabel = new JLabel("Enter IP address of host.",JLabel.CENTER);
+        JLabel infoLabel = new JLabel("Enter host password.",JLabel.CENTER);
         infoLabel.setForeground(purpleD);
         // ip text area
         ipField = new JTextField(10);

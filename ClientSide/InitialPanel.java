@@ -76,10 +76,10 @@ public class InitialPanel extends JPanel {
         this.add(create);
 
         // TEMP BUTTON
-        JButton test = new JButton("test");
-        test.setActionCommand("test");
-        test.addActionListener(ic);
-        this.add(test);
+//        JButton test = new JButton("test");
+//        test.setActionCommand("test");
+//        test.addActionListener(ic);
+//        this.add(test);
 
     }
 
