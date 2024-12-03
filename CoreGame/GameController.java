@@ -152,57 +152,6 @@ public class GameController implements ActionListener, KeyListener {
                 // Handle collisions
                 handlePlayerCollision();
 
-        /*
-        for (Collectible collectible : collectibles)
-        {
-            if (myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
-                    myPlayer.getYPos() + (myPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
-                    myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
-                    myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
-            {
-
-                collectible.applyEffects(myPlayer);
-                collectibles.remove(collectible);
-                break;
-            }
-
-            for (Player otherPlayer : otherPlayers.values()){
-                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
-                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
-                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
-                {
-
-                    //collectible.applyEffects(otherPlayer);
-                    collectibles.remove(collectible);
-                    break;
-                }
-            }
-
-
-        }
-
-         */
-
-        /*
-        for (Collectible collectible : collectibles)
-        {
-            for (Player otherPlayer : otherPlayers.values()){
-                if (otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) >= collectible.getYPos() &&
-                        otherPlayer.getYPos() + (otherPlayer.getCharacterHeight()/2) <= collectible.getYPos() + collectible.getHeight() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= collectible.getXPos() &&
-                        otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth() )
-                {
-
-                    //collectible.applyEffects(otherPlayer);
-                    collectibles.remove(collectible);
-                    break;
-                }
-            }
-        }
-
-         */
-
                 // Check if player is in the air
                 checkIfInAir();
 
@@ -212,14 +161,6 @@ public class GameController implements ActionListener, KeyListener {
                 // Adjust camera position to follow player
                 adjustCamera();
 
-        /*
-        //Check if player reached the goal
-        if (new Rectangle(myPlayer.getXPos(), myPlayer.getYPos(), myPlayer.getCharacterWidth(), myPlayer.getCharacterHeight()).intersects(goal))
-        {
-            gameWon = true;
-        }
-
-         */
 
                 updateGamePanelComponents();
             } else {
@@ -230,8 +171,6 @@ public class GameController implements ActionListener, KeyListener {
                         readyTime += elapsedTime;
                     }
 
-
-                    //System.out.println(readyTime);
                 }
 
                 if (readyTime >= 3000) {
@@ -281,13 +220,6 @@ public class GameController implements ActionListener, KeyListener {
                 myPlayer.setOnPlatform(false);
             }
 
-//            try {
-//                client.sendToServer(myPlayer.toString());
-//            } catch (IOException e1) {
-//                // TODO Auto-generated catch block
-//                e1.printStackTrace();
-//            }
-
             gamePanel.repaint();
         }//redraw the frame every
     }
@@ -301,13 +233,6 @@ public class GameController implements ActionListener, KeyListener {
             myPlayer.setMoving(false);
             myPlayer.setMovingRight(false);
         }
-
-//        try {
-//            client.sendToServer(myPlayer.toString());
-//        } catch (IOException e1) {
-//            // TODO Auto-generated catch block
-//            e1.printStackTrace();
-//        }
 
         gamePanel.repaint();
     }
@@ -371,51 +296,9 @@ public class GameController implements ActionListener, KeyListener {
                     myPlayer.setOnPlatform(false);
                 }
             }
-            /*
-            for (Player otherPlayer : otherPlayers.values()) {
-                if (otherPlayer.getYPos() + otherPlayer.getCharacterHeight() >= platform.getYPos() &&
-                        otherPlayer.getYPos() + otherPlayer.getCharacterHeight() <= platform.getYPos() + otherPlayer.getYSpeed() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= platform.getXPos() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() <= platform.getXPos() + platform.getWidth()) {
-
-                    otherPlayer.setYPos(platform.getYPos() - otherPlayer.getCharacterHeight());
-
-                    otherPlayer.setYSpeed(0);
-                    otherPlayer.setInAir(false);
-                    otherPlayer.setOnPlatform(true);
-                    break;
-                }
-                else {
-                    otherPlayer.setOnPlatform(false);
-                }
-
-             */
 
         }
 
-        /*
-        //check platform collision for the other players
-        for (Platform platform : platforms) {
-            for (Player otherPlayer : otherPlayers.values()) {
-                if (otherPlayer.getYPos() + otherPlayer.getCharacterHeight() >= platform.getYPos() &&
-                        otherPlayer.getYPos() + otherPlayer.getCharacterHeight() <= platform.getYPos() + otherPlayer.getYSpeed() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() >= platform.getXPos() &&
-                        otherPlayer.getXPos() + otherPlayer.getCharacterWidth() <= platform.getXPos() + platform.getWidth()) {
-
-                    otherPlayer.setYPos(platform.getYPos() - otherPlayer.getCharacterHeight());
-
-                    otherPlayer.setYSpeed(0);
-                    otherPlayer.setInAir(false);
-                    otherPlayer.setOnPlatform(true);
-                    break;
-                }
-                else {
-                    otherPlayer.setOnPlatform(false);
-                }
-            }
-        }
-
-         */
     }
 
     public void handleCollisionWithSpikes(){
@@ -832,21 +715,8 @@ public class GameController implements ActionListener, KeyListener {
     public void addNewPlayer(Player newPlayer) {
         System.out.println("In the addnewplayer method, new player added");
 
-        /*
-        try {
-            BufferedImage tempSprite = ImageIO.read(getClass().getResource("/bear_idle.png"));
-            newPlayer.updateCurrentPlayerSprite(tempSprite);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-         */
-
         otherPlayers.put(newPlayer.getId(), newPlayer);
 
-
-        //System.out.println("New player sprite: " + otherPlayers.get(newPlayer.getId()).getCurrentPlayerSprite());
-        //otherPlayers.get(newPlayer.getId()).getCurrentPlayerSprite();
     }
 
     public void updateOtherPlayer(Player newPlayer) {
@@ -854,10 +724,7 @@ public class GameController implements ActionListener, KeyListener {
 
         for (Player otherPlayer : otherPlayers.values()) {
             if (otherPlayer.getId() == newPlayer.getId()) {
-                //System.out.println("Player " + otherPlayer.getId() + " moved");
 
-                //otherPlayer.setXPos(newPlayer.getXPos());
-                //otherPlayer.setYPos(newPlayer.getYPos());
 
                 otherPlayer.setMoving(newPlayer.isMoving());
                 otherPlayer.setFacingLeft(newPlayer.isFacingLeft());
@@ -870,11 +737,6 @@ public class GameController implements ActionListener, KeyListener {
 
                 otherPlayer.setXPos(newPlayer.getXPos());
                 otherPlayer.setYPos(newPlayer.getYPos());
-
-                //otherPlayer.setPlayerDimensions(32,32);
-
-                //System.out.println("Other player presed or released a key");
-                //System.out.println("Other player is moving: " + otherPlayer.isMoving());
 
 
             }
