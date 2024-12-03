@@ -402,7 +402,10 @@ public class GameController implements ActionListener, KeyListener {
                     myPlayer.getXPos() + myPlayer.getCharacterWidth() >= collectible.getXPos() &&
                     myPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
 
-                collectible.applyEffects(myPlayer);
+                if(collectible instanceof BoostCollectible){
+                    collectible.applyEffects(myPlayer);
+                }
+                //collectible.applyEffects(myPlayer);
                 iterator.remove(); // Safe removal using the iterator
                 break;
             }
@@ -414,6 +417,10 @@ public class GameController implements ActionListener, KeyListener {
                         otherPlayer.getXPos() <= collectible.getXPos() + collectible.getWidth()) {
 
                     // collectible.applyEffects(otherPlayer);
+
+                    if(collectible instanceof FreezeCollectible){
+                        collectible.applyEffects(myPlayer);
+                    }
                     iterator.remove(); // Safe removal using the iterator
                     break;
                 }
