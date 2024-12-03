@@ -31,17 +31,6 @@ public class EndPanel extends JPanel {
         this.setPreferredSize(new Dimension(1080,624));
         this.setLayout(new GridBagLayout());
 
-//        // get original images
-//        BufferedImage original_background_lose = ImageIO.read(getClass().getResourceAsStream("/assets/background_lose.png"));
-//        BufferedImage original_background_win = ImageIO.read(getClass().getResourceAsStream("/assets/background_win.png"));
-//        BufferedImage original_logout_image = ImageIO.read(getClass().getResourceAsStream("/assets/button_logout_2.png"));
-//
-//        // get re-scaled width and height
-//        newWidthB = (int) (original_background_lose.getWidth() * scaleF);
-//        newHeightB = (int) (original_background_lose.getHeight() * scaleF);
-//        newWidthL = (int) (original_logout_image.getWidth() * scaleF);
-//        newHeightL = (int) (original_logout_image.getHeight() * scaleF);
-
         // resizing
         background_lose = ImageIO.read(getClass().getResourceAsStream("/assets/background_lose.png"));
         background_win = ImageIO.read(getClass().getResourceAsStream("/assets/background_win.png"));
@@ -52,25 +41,6 @@ public class EndPanel extends JPanel {
         newHeightB = (int) (background_lose.getHeight() * scaleF);
         newWidthL = (int) (logoutButton.getWidth() * scaleF);
         newHeightL = (int) (logoutButton.getHeight() * scaleF);
-
-        // draw background based on win or lose
-//        if (gc.getPlayer().hasReachedGoal()) {
-//            // draw BACKGROUND WIN!!!
-//            Graphics2D g2b = background_win.createGraphics();
-//            g2b.drawImage(original_background_win, 0, 0, newWidthB, newHeightB, null);
-//            g2b.dispose();
-//        }
-//        else {
-//            // draw BACKGROUND WIN!!!
-//            Graphics2D g2b = background_lose.createGraphics();
-//            g2b.drawImage(original_background_lose, 0, 0, newWidthB, newHeightB, null);
-//            g2b.dispose();
-//        }
-
-//        // draw LOGOUT
-//        Graphics2D g2l = logoutButton.createGraphics();
-//        g2l.drawImage(logoutButton, 0, 0, newWidthL, newHeightL, null);
-//        g2l.dispose();
 
         // ---------------------------------------------------
 
@@ -112,7 +82,6 @@ public class EndPanel extends JPanel {
 
         }
 
-        //g.drawImage(logoutButton, 0, 0, newWidthL, newHeightL, null);
     }
 
     public void setScreen(Player player){

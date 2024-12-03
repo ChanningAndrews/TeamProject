@@ -20,7 +20,7 @@ public class Platform {
         if (!imageRead) {
             try {
                 BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/platform.png"));
-                System.out.println("read platforms fine");
+                //System.out.println("read platforms fine");
                 platformImage = tmpImage;
                 imageRead = true;
             } catch (IOException e) {

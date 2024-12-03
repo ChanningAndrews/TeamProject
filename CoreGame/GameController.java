@@ -359,7 +359,7 @@ public class GameController implements ActionListener, KeyListener {
                             otherPlayer.getXPos() <= spike.getXPos() + spike.getWidth() )
                     {
 
-                        System.out.println("other player staggered is true");
+                        //System.out.println("other player staggered is true");
                         otherPlayer.setInAir(true);
                         otherPlayer.setStaggered(true);
                         otherPlayer.setYSpeed(JUMP_STRENGTH*3/5);
@@ -396,18 +396,18 @@ public class GameController implements ActionListener, KeyListener {
         for (Player otherPlayer : otherPlayers.values()){
             if(otherPlayer.isStaggered())
             {
-                System.out.println("other player is staggered and should be moving");
+                //System.out.println("other player is staggered and should be moving");
                 staggerTime += elapsedTime;
                 if(otherPlayer.isInTheAir())
                 {
                     if (otherPlayer.isFacingLeft())
                     {
-                        System.out.println("moving");
+                        //System.out.println("moving");
                         otherPlayer.setXPos(otherPlayer.getXPos() + otherPlayer.getXSpeed());
                     }
                     else
                     {
-                        System.out.println("moving");
+                        //System.out.println("moving");
                         otherPlayer.setXPos((otherPlayer.getXPos()) - otherPlayer.getXSpeed());
                     }
                 }
@@ -527,7 +527,6 @@ public class GameController implements ActionListener, KeyListener {
             // Reset to idle sprite when not moving
             try
             {
-                //currCharSprite = ImageIO.read(getClass().getResource("/assets/bear_idle.png"));
                 myPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_idle.png")));
             } catch (IOException e1)
             {
@@ -536,7 +535,7 @@ public class GameController implements ActionListener, KeyListener {
         }
 
         for (Player otherPlayer : otherPlayers.values()) {
-            if (otherPlayer.isMoving()/*isMoving*/) {
+            if (otherPlayer.isMoving()) {
                 try {
                     otherPlayer.updateCurrentPlayerSprite(ImageIO.read(getClass().getResource("/assets/bear_walk.png")));
                     otherPlayer.updateCurrentPlayerSprite(otherPlayer.getCurrentPlayerSprite().getSubimage(32 * animationCounter, 0, 32, 32));
@@ -702,21 +701,20 @@ public class GameController implements ActionListener, KeyListener {
         updateGamePanelComponents();
         this.gamePanel.setGoal(goal);
         this.gamePanel.setReady(true);
-        //startGameTimer();
     }
 
     public void addPlatform(Platform platform){
-        System.out.println("Received new platform");
+        //System.out.println("Received new platform");
         platforms.add(platform);
     }
 
     public void addSpike(Obstacle spike){
-        System.out.println("Received new spike");
+        //System.out.println("Received new spike");
         spikes.add(spike);
     }
 
     public void addCollectible(Collectible collectible){
-        System.out.println("Received new collectible");
+        //System.out.println("Received new collectible");
         collectibles.add(collectible);
     }
 
@@ -750,7 +748,7 @@ public class GameController implements ActionListener, KeyListener {
 
 
     public void addNewPlayer(Player newPlayer) {
-        System.out.println("In the addnewplayer method, new player added");
+        //System.out.println("In the addnewplayer method, new player added");
 
         otherPlayers.put(newPlayer.getId(), newPlayer);
 
@@ -769,10 +767,13 @@ public class GameController implements ActionListener, KeyListener {
         EndPanel endPanel = (EndPanel)container.getComponent(7);
         endPanel.setScreen(myPlayer);
         cardLayout.show(container, "8");
+        
+        //revert this state back to false so that the player may start a new game after logging out
+        myPlayer.setGoalReached(false);
 
         this.gamePanel.setOtherPlayers(otherPlayers);
 
-        System.out.println("Other player object: " + otherPlayers);
+        //System.out.println("Other player object: " + otherPlayers);
     }
 
     public void updateOtherPlayer(Player newPlayer) {

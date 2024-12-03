@@ -44,72 +44,8 @@ public class GameServer extends AbstractServer {
 
         generatePlatformsAndTraps(900, 216, 1848, 80, 66, 15, platforms);
 
-        /*
-
-        // Initialize the map on the server side
-        int[][] mapMatrix = {
-            	{0, 0, 0, 0, 0, 23, 16, 15, 20, 20, 20, 19, 19, 17, 20, 20, 20, 18, 20, 20, 20, 20, 20, 15, 20, 20, 16, 20, 20, 15, 16, 20, 20, 20, 17, 20, 16, 20, 15, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 15, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 20, 20, 19, 16, 15, 20, 20, 16, 15, 20, 15, 15, 20, 20, 18, 20, 15, 20, 20, 16, 20, 20, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 19, 19, 16, 20, 20, 20, 16, 17, 20, 20, 15, 18, 20, 20, 20, 20, 19, 20, 20, 19, 20, 16, 15, 20, 20, 20, 16, 20, 20, 17, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 20, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 18, 19, 19, 16, 15, 20, 20, 20, 20, 16, 15, 20, 20, 18, 18, 20, 15, 20, 16, 16, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 20, 20, 16, 20, 20, 20, 16, 16, 17, 20, 18, 18, 20, 20, 20, 20, 19, 18, 20, 19, 16, 16, 15, 20, 20, 20, 16, 15, 17, 20, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 18, 20, 20, 20, 17, 19, 19, 17, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 16, 20, 20, 20, 17, 20, 16, 20, 15, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 19, 19, 16, 20, 20, 20, 16, 17, 20, 20, 15, 18, 20, 20, 20, 20, 19, 20, 20, 19, 20, 16, 15, 20, 20, 20, 16, 20, 20, 17, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 19, 19, 16, 20, 20, 20, 16, 17, 20, 20, 15, 18, 20, 20, 20, 20, 19, 20, 20, 19, 20, 16, 15, 20, 20, 20, 16, 20, 20, 17, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 18, 20, 20, 20, 17, 19, 19, 17, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 16, 20, 20, 20, 17, 20, 16, 20, 15, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 15, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 20, 20, 19, 16, 15, 20, 20, 16, 15, 20, 15, 15, 20, 20, 18, 20, 15, 20, 20, 16, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 20, 20, 16, 20, 20, 20, 16, 16, 17, 20, 18, 18, 20, 20, 20, 20, 19, 18, 20, 19, 16, 16, 15, 20, 20, 20, 16, 15, 17, 20, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 16, 15, 20, 20, 20, 19, 19, 17, 20, 20, 20, 18, 20, 20, 20, 20, 20, 15, 20, 20, 16, 20, 20, 15, 16, 20, 20, 20, 17, 20, 16, 20, 15, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 20, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 18, 19, 19, 16, 15, 20, 20, 20, 20, 16, 15, 20, 20, 18, 18, 20, 15, 20, 16, 16, 20, 20, 24, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 23, 19, 19, 16, 20, 20, 20, 16, 17, 20, 20, 15, 18, 20, 20, 20, 20, 19, 20, 20, 19, 20, 16, 15, 20, 20, 20, 16, 20, 20, 17, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 18, 20, 20, 20, 17, 19, 19, 17, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 20, 20, 20, 20, 20, 15, 16, 20, 20, 20, 17, 20, 16, 20, 15, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 15, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 20, 20, 19, 16, 15, 20, 20, 16, 15, 20, 15, 15, 20, 20, 18, 20, 15, 20, 20, 16, 20, 20, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 23, 20, 20, 16, 20, 20, 20, 16, 16, 17, 20, 18, 18, 20, 20, 20, 20, 19, 18, 20, 19, 16, 16, 15, 20, 20, 20, 16, 15, 17, 20, 20, 20, 20, 24, 0, 0, 0, 0, 0},
-            	{0, 0, 0, 0, 0, 21, 19, 15, 15, 20, 17, 15, 15, 20, 16, 20, 16, 18, 18, 15, 19, 20, 16, 15, 16, 20, 20, 20, 19, 20, 18, 15, 17, 20, 20, 16, 16, 15, 18, 22, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 15, 20, 20, 20, 15, 16, 20, 20, 17, 20, 20, 17, 15, 20, 20, 16, 15, 20, 20, 20, 15, 20, 20, 16, 20, 16, 15, 20, 20, 19, 18, 20, 20, 19, 19, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 20, 16, 15, 20, 20, 17, 19, 20, 17, 20, 20, 20, 18, 20, 20, 20, 20, 20, 15, 20, 20, 16, 20, 20, 15, 16, 20, 20, 20, 17, 16, 16, 20, 15, 15, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 15, 19, 19, 16, 16, 20, 20, 20, 20, 16, 15, 18, 18, 19, 19, 16, 15, 17, 17, 16, 15, 16, 15, 15, 15, 18, 18, 16, 15, 19, 16, 16, 20, 20, 15, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 13, 14, 13, 14, 13, 14, 13, 14 ,13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 0, 0, 0, 0, 0},
-                {2, 1, 2, 1, 2, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 1, 2, 1, 2, 1},
-                {4, 3, 4, 3, 4, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 3, 4, 3, 4, 3},
-                {6, 5, 6, 5, 6, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 11, 5, 6, 5, 6, 5},
-                {8, 7, 8, 7, 8, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 13, 7, 8, 7, 8, 7}
-                // Add more rows as needed
-        };
-        try {
-            this.tileMap = new TileMap("tileset.png", mapMatrix);
-        } catch (Exception e) {
-            System.out.println("Failed to initialize the map.");
-            e.printStackTrace();
-        }
-
-        */
-
     }
 
-    /*
-    @Override
-    protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-    	try {
-            if (msg.equals("REQUEST_MAP")) {
-                // Send the map to the client
-                client.sendToClient(tileMap);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    	try {
-            if (msg instanceof Player) {
-            	Player tempPlayer = (Player)msg;
-                players.put(tempPlayer.getId(), tempPlayer);
-                sendUpdateToClients();
-            }
-        } catch (Exception e) {
-            System.err.println("Error handling message from client: " + e.getMessage());
-        }
-    }
-    */
 
     //setter for the database
     public void setDatabase(Database database) {
@@ -186,12 +122,12 @@ public class GameServer extends AbstractServer {
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
-        if (msg instanceof JoinData) {
-            JoinData data = (JoinData) msg;
-            System.out.println("User joined with IP: " + data.getHostPassword());
+        //if (msg instanceof JoinData) {
+            //JoinData data = (JoinData) msg;
+            //System.out.println("User joined with IP: " + data.getHostPassword());
 
-            sendToAllClients("START GAME");
-        }
+            //sendToAllClients("START GAME");
+        //}
 
         if (msg.equals("I'm done")){
             sendToAllClients("Player disconnected");
@@ -249,7 +185,6 @@ public class GameServer extends AbstractServer {
                     }
                 }
             } else if (message.startsWith("PlayerId")) {
-                //System.out.println("got a player string");
                 Player tempPlayer = fromString(message);
                 //System.out.println("Temp player created from string: " + tempPlayer);
                 if (players.containsKey(tempPlayer.getId())) {
@@ -353,85 +288,6 @@ public class GameServer extends AbstractServer {
                 e.printStackTrace();
             }
         }
-
-
-
-
-
-
-
-
-
-        /*
-        if (msg instanceof Player) {
-            Player tempPlayer = (Player)msg;
-            //System.out.println("Client " + client.getId() + " moved");
-            //System.out.println("Client " + client.getId() + " new postions: " + tempPlayer.getPos());
-            if(players.containsKey(tempPlayer.getId())) {
-                for (Thread clientThread : getClientConnections()) {
-                    ConnectionToClient tempClient = (ConnectionToClient) clientThread;
-
-                    // Skip the sender
-                    if (tempClient != client) {
-                        try {
-                            tempClient.sendToClient((Player)msg);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } // Send the message to other clients
-                    }
-
-                }
-            } else {
-                Player newPlayer = (Player)msg;
-                players.put(newPlayer.getId(), newPlayer);
-                //System.out.println("New player added" + msg);
-                //System.out.println("Number of players: " + players.size());
-                //System.out.println("Player iD: " + newPlayer.getId());
-                //System.out.println("Player x pos: " + newPlayer.getXPos());
-                //System.out.println("Player y pos: " + newPlayer.getYPos());
-                //System.out.println("Current sprite of new player: " + newPlayer.getCurrentPlayerSprite());
-
-
-
-
-                //For sending the new player info about all of the existing players
-                for (Player existingPlayer : players.values()) {
-                    if(existingPlayer.getId() != newPlayer.getId()) {
-                        try {
-                            client.sendToClient(existingPlayer);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-
-
-                //For sending all of the other players info on the new player
-                for (Thread clientThread : getClientConnections()) {
-                    ConnectionToClient tempClient = (ConnectionToClient) clientThread;
-
-                    // Skip the sender
-                    if (tempClient != client) {
-                        try {
-                            tempClient.sendToClient(newPlayer);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } // Send the message to other clients
-                    }
-
-                }
-            }
-
-
-
-
-        }
-
-         */
 
 
         if(msg.equals("message")) {
@@ -598,7 +454,6 @@ public class GameServer extends AbstractServer {
 
                 if(hasSpikes){
                     spikePlacement = random.nextInt(3);
-                    //spikePlacement = 1;
                     spikes.add(new Obstacle(currPlatformXPos + (spikePlacement * 24), rowPos-24, "spikes", 1.5));
                 }
                 else{
@@ -632,124 +487,6 @@ public class GameServer extends AbstractServer {
         System.out.println("Server generated spikes: " + spikes);
     }
 
-
-
-    /*
-
-    public void generatePlatformsAndTraps(int mapWidth, int platformXStartPos, int playerStartingYPos, int baseJumpVal, int platformWidth, int platformHeight, ArrayList<Platform> platformsContainer) {
-        Platform lastPlatform = new Platform(panelWidth/2, myPlayer.getCharacterHeight(), scaleFactor);
-
-        int rowPos = playerStartingYPos - baseJumpVal;
-
-        int firstTowerWallXPos = 4 * tileMap.getTileWidth();
-        int secondTowerWallXPos = (tileMap.getMapWidth() - 4) * tileMap.getTileWidth();
-
-        int towerWidth = secondTowerWallXPos - firstTowerWallXPos;
-
-        int horizontalGap = 120;
-        int currPlatformXPos = platformXStartPos;
-
-        int numPlatformsPerRow = towerWidth / (platformWidth + horizontalGap);
-
-        boolean startDecider = true;
-
-        Random random = new Random();
-        int spikePlacement = 0;
-
-        int spikeDecider = 0;
-
-        boolean hasSpikes = false;
-
-        int collectibleDecider = 2;
-
-        boolean collectibleOnTop = false;
-
-        while(rowPos - platformHeight > lastPlatform.getYPos()) {
-            for(int i = 0; i < numPlatformsPerRow; i++) {
-                platformsContainer.add(new Platform(currPlatformXPos, rowPos, scaleFactor));
-                spikeDecider = random.nextInt(4);
-                //spikeDecider = 4;
-
-                if(spikeDecider == 0){
-                    hasSpikes = true;
-                }
-                else{
-                    hasSpikes = false;
-                    collectibleDecider = random.nextInt(8);
-                }
-
-                if(!hasSpikes && collectibleDecider == 0){
-                    collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
-                }
-
-                if(hasSpikes){
-                    spikePlacement = random.nextInt(3);
-                    //spikePlacement = 1;
-                    spikes.add(new Obstacle(currPlatformXPos + (spikePlacement * 24), rowPos-24, "spikes", scaleFactor));
-                }
-                else{
-
-                }
-
-                currPlatformXPos += (platformWidth +horizontalGap);
-            }
-
-            rowPos -= (myPlayer.getCharacterHeight()+baseJumpVal-25);
-            startDecider = !startDecider;
-
-            if(startDecider) {
-                currPlatformXPos = platformXStartPos;
-                numPlatformsPerRow += 1;
-            }
-            else {
-                currPlatformXPos = platformXStartPos + platformWidth + 30;
-                numPlatformsPerRow--;
-            }
-
-            collectibleDecider = -12;
-
-        }
-
-        System.out.println("Client generated collectibles: " + collectibles);
-        System.out.println("Client generated platforms: " + platforms);
-        System.out.println("Client generated spikes: " + spikes);
-
-        platforms.add(lastPlatform);
-    }
-
-
-     */
-
-
-
-    //---------------------main--------------------------------------------------
-    public static void main(String[] args) {
-        int port = 12345; // Change port as needed
-        GameServer server = new GameServer(port);
-
-
-        //create the database instance
-        Database database = new Database();
-        server.setDatabase(database);
-
-
-        try {
-            server.listen(); // Start the server
-            //System.out.println("Server is running on port " + port);
-        } catch (IOException e) {
-            System.out.println("Failed to start the server.");
-            e.printStackTrace();
-        }
-
-
-        try {
-            SoundPlayer audioPlayer = new SoundPlayer();
-            audioPlayer.play();
-        } catch (Exception ex) {
-            System.out.println("Error with playing sound.");
-            ex.printStackTrace();
-        }
-    }
 
     //this method is called whenever a HOST_REQUEST is sent from the client.
     //this method determines whether to grant host permission to this client
@@ -819,7 +556,37 @@ public class GameServer extends AbstractServer {
 
         return response;
     }
+
     private String respondToCreateAccountData(String Password, String Username){
         return null;
+    }
+
+        //---------------------main--------------------------------------------------
+    public static void main(String[] args) {
+        int port = 12345; // Change port as needed
+        GameServer server = new GameServer(port);
+
+
+        //create the database instance
+        Database database = new Database();
+        server.setDatabase(database);
+
+
+        try {
+            server.listen(); // Start the server
+            //System.out.println("Server is running on port " + port);
+        } catch (IOException e) {
+            System.out.println("Failed to start the server.");
+            e.printStackTrace();
+        }
+
+
+        try {
+            SoundPlayer audioPlayer = new SoundPlayer();
+            audioPlayer.play();
+        } catch (Exception ex) {
+            System.out.println("Error with playing sound.");
+            ex.printStackTrace();
+        }
     }
 }

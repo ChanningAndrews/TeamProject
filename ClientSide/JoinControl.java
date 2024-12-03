@@ -25,16 +25,16 @@ public class JoinControl implements ActionListener {
         String command = ae.getActionCommand();
 
         if (command.equals("Submit")) {
-            System.out.println("ip submitted!");
+//            System.out.println("ip submitted!");
 
             JoinData data = new JoinData(JoinPanel.getHostPassword());
 
-//            // Check the validity of the information locally first.
-//            if (data.getIp().equals(""))
-//            {
-//                displayError("You must enter Host IP.");
-//                return;
-//            }
+           // Check the validity of the information locally first.
+           if (data.getHostPassword().equals(""))
+           {
+               displayError("You must enter Host Password.");
+                return;
+           }
 //            else if (!isValidIP(data.getIp())){
 //                displayError("IP address is not valid.");
 //                return;
@@ -43,9 +43,6 @@ public class JoinControl implements ActionListener {
             try
             {
                 client.sendToServer("JOIN_REQUEST" + "#" + JoinPanel.getHostPassword());
-                //client.updateHost(data.getIp());
-//                CardLayout cardLayout = (CardLayout)container.getLayout();
-//                cardLayout.show(container, "7");
             }
             catch (IOException e)
             {

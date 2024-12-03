@@ -16,20 +16,20 @@ public class TileMap {
     private int GOAL_TILE_ID = 10000;// Height in terms of tiles
 
     public TileMap(String tilesetPath, int[][] mapMatrix) throws Exception {
-        System.out.println("Tilemap constructor");
+        //System.out.println("Tilemap constructor");
 
         this.mapMatrix = mapMatrix;
         this.mapWidth = mapMatrix[0].length;
-        System.out.println("Map width: " + mapWidth);
+        //System.out.println("Map width: " + mapWidth);
         this.mapHeight = mapMatrix.length;
-        System.out.println("Map Height: " + mapHeight);
+        //System.out.println("Map Height: " + mapHeight);
 
         // Load tiles from tileset
         BufferedImage tileset = ImageIO.read(getClass().getResourceAsStream(tilesetPath));
-        System.out.println("Read the tileset for the map background.");
+        //System.out.println("Read the tileset for the map background.");
         int numTiles = tileset.getWidth() / tileWidth;
-        System.out.println("Tileset width: " + tileset.getWidth());
-        System.out.println("Num of tiles (tiles are 16x16): " + numTiles);
+        //System.out.println("Tileset width: " + tileset.getWidth());
+        //System.out.println("Num of tiles (tiles are 16x16): " + numTiles);
         tiles = new Tile[numTiles];
 
         for (int i = 0; i < numTiles; i++) {

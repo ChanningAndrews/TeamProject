@@ -31,9 +31,9 @@ public class Obstacle {
         if (!type.equals(Obstacle.type)) {
             try {
                 Obstacle.type = type;
-                System.out.println("Obstacle type: " + Obstacle.type);
+                //System.out.println("Obstacle type: " + Obstacle.type);
                 BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/spikes.png"));
-                System.out.println("read obstacles");
+                //System.out.println("read obstacles");
                 hazardImage = tmpImage;
                 imageRead = true;
             } catch (IOException e) {

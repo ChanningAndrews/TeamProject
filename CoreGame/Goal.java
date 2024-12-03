@@ -20,7 +20,7 @@ public class Goal {
         if (!imageRead) {
             try {
                 BufferedImage tmpImage = ImageIO.read(getClass().getResource("/assets/crown.png"));
-                System.out.println("read crown fine");
+                //System.out.println("read crown fine");
                 goalImage = tmpImage;
                 imageRead = true;
             } catch (IOException e) {
