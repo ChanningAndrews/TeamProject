@@ -26,22 +26,20 @@ public class InitialControl implements ActionListener{
         // the login button takes the user to the login panel
         if (command.equals("Login")){
             LoginPanel loginPanel = (LoginPanel)container.getComponent(1);
-            //loginPanel.setError("");
             CardLayout cardLayout = (CardLayout)container.getLayout();
             cardLayout.show(container, "2");
         }
         // the create button takes the user to the create account panel
         else if (command.equals("Create")){
             CreateAccountPanel createAccountPanel = (CreateAccountPanel)container.getComponent(2);
-            //createAccountPanel.setError("");
             CardLayout cardLayout = (CardLayout)container.getLayout();
             cardLayout.show(container, "3");
         }
-        else if (command.equals("test")){
-            HostOrJoinGamePanel hostOrJoinGamePanel = (HostOrJoinGamePanel)container.getComponent(3);
-            CardLayout cardLayout = (CardLayout)container.getLayout();
-            cardLayout.show(container, "4");
-        }
+//        else if (command.equals("test")){
+//            HostOrJoinGamePanel hostOrJoinGamePanel = (HostOrJoinGamePanel)container.getComponent(3);
+//            CardLayout cardLayout = (CardLayout)container.getLayout();
+//            cardLayout.show(container, "4");
+//        }
     }
 
     /*

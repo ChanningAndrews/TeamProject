@@ -248,14 +248,9 @@ public class GamePanel extends JPanel {
         }
 
         for (Player otherPlayer : otherPlayers.values()) {
-            //System.out.println("Drawing player " + otherPlayer.getId() + " at " + otherPlayer.getPos());
             if (otherPlayer.isFacingLeft()) {
-                //System.out.println("Drawing other player at : " + otherPlayer.getPos());
-                //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
                 g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos()/*x*/, otherPlayer.getYPos()/*y*/, otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
             } else {
-                //System.out.println("Drawing other player at : " + otherPlayer.getPos());
-                //System.out.println("Drawing other player, current sprite is " + otherPlayer.getCurrentPlayerSprite());
                 g2d.drawImage(otherPlayer.getCurrentPlayerSprite(), otherPlayer.getXPos() + otherPlayer.getCharacterWidth(), otherPlayer.getYPos(), -otherPlayer.getCharacterWidth(), otherPlayer.getCharacterHeight(), null);
             }
         }

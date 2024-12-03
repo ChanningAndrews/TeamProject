@@ -11,8 +11,6 @@ import java.util.HashMap;
 
 public class GameClient extends AbstractClient {
     //controllers
-    private CreateAccountControl createAccountController;
-    private LoginControl loginController;
     private GameController gameController;
     private HostOrJoinGameControl hostOrJoinControl;
     private JoinControl joinControl;
@@ -78,7 +76,6 @@ public class GameClient extends AbstractClient {
 
         if(msg instanceof String) {
             String message = (String)msg;
-            //System.out.println("message: " + message);
 
             if(message.equals("GAME_START_HOST")){
                 this.hostControl.gameStart();
@@ -100,23 +97,15 @@ public class GameClient extends AbstractClient {
             if(message.startsWith("PlayerId")) {
                 Player tempPlayer = fromString(message);
 
-                //System.out.println(gamePanel.getPlayer().getId());
-
-                if(tempPlayer.getId() == gameController.getPlayer().getId()/*gamePanel.getPlayer().getId()*/) {
+                if(tempPlayer.getId() == gameController.getPlayer().getId()) {
                     return;
                 }
 
                 if(gameController.getOtherPlayers().containsKey(tempPlayer.getId()) && tempPlayer.getId() != gameController.getPlayer().getId()) {
-                    //System.out.println("Player " + tempPlayer.getId() + " moved");
-                    //System.out.println("Their new position is " + tempPlayer.getPos());
                     gameController.updateOtherPlayer(tempPlayer);
-
-                    //gamePanel.repaint();
                 }
                 else{
-                    System.out.println("CLIENT IS CALLING ADD NEW PLAYER");
                     gameController.addNewPlayer(tempPlayer);
-                    System.out.println("New Player " + tempPlayer.getId() + " joined the game");
 
                 }
             }
@@ -127,55 +116,42 @@ public class GameClient extends AbstractClient {
                 boolean newSpikeState = Boolean.parseBoolean(message.split(":")[1]);
                 Obstacle.draw = newSpikeState;
 
-                // Optionally trigger a repaint or other actions if necessary
-
             }
 
 
             if(message.startsWith("Platform")){
-                System.out.println("Client got a platform from the server");
                 Platform tempPlatform = parsePlatformFromString(message);
 
                 platforms.add(tempPlatform);
             }
 
             if(message.startsWith("Obstacle")){
-                System.out.println("Received a spike from the server");
                 Obstacle tempObstacle = parseObstacleFromString(message, 1.5);
                 spikes.add(tempObstacle);
             }
 
             if(message.startsWith("Collectible")){
-                System.out.println("Received a collectible from the server");
                 Collectible tempCollectible = parseCollectibleFromString(message);
                 collectibles.add(tempCollectible);
             }
 
             if(message.equals("Initialization done")){
-                System.out.println("Received all the initialized objects from the server. Attempting to set up the controller");
-
                 this.connectionSetUpOver = true;
             }
 
             if(message.equals("CreateAccountSuccessful")){
-                System.out.println("shit worked good job ");
-
                 createAccountControl.createAccountSuccess();
             }
 
             if (message.equals("Username has already been selected")){
-                System.out.println("shit busted frfr on g ");
-
                 createAccountControl.displayError("Username has already been selected");
             }
 
             if (message.equals("LoginSuccessful")){
-                System.out.println("LoginSuccessfull");
                 loginControl.loginSuccess();
             }
 
             if (message.equals("Invalid username or password")){
-                System.out.println("Invalid username or password");
                 loginControl.displayError("Invalid username or password");
             }
 
@@ -185,81 +161,7 @@ public class GameClient extends AbstractClient {
 
         }
 
-
-
-
-        if (msg instanceof TileMap) {
-            tileMap = (TileMap) msg;
-            //System.out.println("Map received from server: " + tileMap);
-            // Render the map in the client GUI
-
-            /*
-            // Reload the tileset on the client side
-            try {
-                tileMap.reloadTiles("tileset.png");
-            } catch (Exception e) {
-                e.printStackTrace();
-                //System.out.println("Failed to reload tileset on client.");
-            }
-
-            */
-
-            // Create a frame to display the map
-            javax.swing.SwingUtilities.invokeLater(() -> {
-
-                //TwoPlayerTesting gamePanel = null;
-                try {
-                    //gamePanel = new TwoPlayerTesting(tileMap, this);
-                    //System.out.println("Sending new player from client, current sprite is: " + gamePanel.getPlayer().getCurrentPlayerSprite());
-                    sendToServer(gamePanel.getPlayer());
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                javax.swing.JFrame frame = new javax.swing.JFrame("Multiplayer Game");
-                frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-                frame.add(gamePanel);
-                frame.pack();
-                frame.setVisible(true);
-            });
-        }
-
-        if (msg instanceof Player) {
-            Player tempPlayer = (Player)msg;
-            if(gamePanel.getOtherPlayers().containsKey(tempPlayer.getId()) && tempPlayer != gamePanel.getPlayer()) {
-                //System.out.println("Player " + tempPlayer.getId() + " moved");
-                //System.out.println("Their new position is " + tempPlayer.getPos());
-                //gamePanel.updateOtherPlayer(tempPlayer);
-
-                //gamePanel.repaint();
-            }
-            else{
-                gamePanel.addNewPlayer((Player)msg);
-                //System.out.println("New Player " + tempPlayer.getId() + " joined the game");
-
-            }
-
-        }
-
-        if (msg instanceof HashMap) {
-            gamePanel.updatePositions((HashMap<Integer, Player>) msg);
-        }
-
-
     }
-
-
-
-    public void requestMap() {
-        try {
-            sendToServer("REQUEST_MAP");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 
     public void connectionException (Throwable exception) {
         System.out.println("Connection Exception Occurred");
@@ -272,7 +174,6 @@ public class GameClient extends AbstractClient {
     }
 
     public void createMap() throws Exception {
-        System.out.println("Entered the CreateMap method");
         int[][] mapMatrix = {
                 {0, 0, 0, 0, 0, 23, 15, 20, 20, 20, 20, 17, 20, 20, 20, 19, 15, 20, 20, 20, 15, 18, 20, 16, 17, 20, 20, 19, 18, 20, 20, 16, 15, 20, 15, 20, 20, 17, 20, 24, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 23, 20, 20, 16, 16, 20, 20, 20, 20, 16, 15, 18, 18, 19, 19, 16, 15, 20, 20, 20, 20, 16, 15, 20, 20, 18, 18, 20, 15, 20, 16, 16, 20, 20, 24, 0, 0, 0, 0, 0},
@@ -360,61 +261,27 @@ public class GameClient extends AbstractClient {
 
         GameMap gameMap = new GameMap(1000, 800, mapMatrix);
 
-        /*
-        try {
-            this.tileMap = new TileMap("tileset.png", mapMatrix);
-        } catch (Exception e) {
-            System.out.println("Failed to initialize the map.");
-            e.printStackTrace();
-        }
-
-         */
-
-        /*
-        try {
-            tileMap.reloadTiles("tileset.png");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to reload tileset on client.");
-        }
-
-         */
 
         for(Platform p : platforms){
-            System.out.println("adding a platform from client to gameController");
             gameController.addPlatform(p);
         }
-
-        System.out.println("All platforms from client copied to the gameController");
 
         for(Obstacle o : spikes){
             gameController.addSpike(o);
         }
 
-        System.out.println("All spikes from client copied to the gameController");
-
         for(Collectible c : collectibles){
             gameController.addCollectible(c);
         }
-        //TwoPlayerTesting gamePanel = null;
+
         try {
-            //gamePanel = new TwoPlayerTesting(gameMap, this);
-            //System.out.println("Sending new player from client, current sprite is: " + gamePanel.getPlayer().getCurrentPlayerSprite());
-            System.out.println("Sending the new player from client");
             sendToServer(gameController.getPlayer().toString());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        System.out.println("setting up the gameController");
+        //Setting up the game controller
         gameController.setUp(gameMap);
-
-//            javax.swing.JFrame frame = new javax.swing.JFrame("Multiplayer Game");
-//            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-//            frame.add(gamePanel);
-//            frame.pack();
-//            frame.setVisible(true);
     }
 
     public static Player fromString(String playerString) {
@@ -660,33 +527,6 @@ public class GameClient extends AbstractClient {
         }
     }
 
-
-
-    //client should not have a main. Main only runs on ClientGUI()
-    /*
-    public static void main(String[] args) {
-        GameClient client = new GameClient("10.251.147.172", 12345); // Adjust host/port as needed
-        try {
-            client.openConnection();
-            client.createMap();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
-    */
-
-
-    public void setCreateAccountController(CreateAccountControl createAccountController){
-        this.createAccountController = createAccountController;
-    }
-
-    public void setLoginController(LoginControl loginController){
-        this.loginController = loginController;
-    }
 
     public void setGameController(GameController gameController){
         this.gameController = gameController;
