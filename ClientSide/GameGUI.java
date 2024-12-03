@@ -7,13 +7,23 @@ import CoreGame.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.SQLOutput;
+import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class GameGUI extends JFrame{
     // Constructor
+    private String serverIp;
+    private final String CONFIG_FILE = "clientConfig.txt";
+
     public GameGUI() throws Exception {
         // set up the game client
-        GameClient client = new GameClient("localhost", 12345);
+        this.serverIp = loadServerIp();
+
+        GameClient client = new GameClient(serverIp, 12345);
 
         try {
             client.openConnection();
@@ -108,6 +118,35 @@ public class GameGUI extends JFrame{
         });
     }
 
+    private String loadServerIp() {
+
+        String defaultIp = "127.0.0.1"; // Default to localhost
+        URL resourceUrl = getClass().getResource("/resources/"+CONFIG_FILE); // Locate the file in resources
+
+        if (resourceUrl == null) {
+            System.err.println("Resource " + CONFIG_FILE + " not found. Defaulting to " + defaultIp);
+            return defaultIp;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceUrl.openStream()))) {
+            String ip = reader.readLine();
+            if (ip != null && isValidIp(ip.trim())) {
+                return ip.trim();
+            } else {
+                System.err.println("Invalid or missing IP in " + CONFIG_FILE + ". Defaulting to " + defaultIp);
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to read " + CONFIG_FILE + ". Defaulting to " + defaultIp);
+        }
+        return defaultIp;
+    }
+
+    private boolean isValidIp(String ip) {
+        // Regex pattern for validating IPv4 addresses
+        String ipv4Pattern =
+                "^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$";
+        return Pattern.matches(ipv4Pattern, ip);
+    }
 
     public static void main(String[] args){
         javax.swing.SwingUtilities.invokeLater(() -> {

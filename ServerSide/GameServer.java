@@ -55,12 +55,14 @@ public class GameServer extends AbstractServer {
 
     @Override
     protected void clientConnected(ConnectionToClient client) {
-        //System.out.println("A new client has connected: " + client.getInetAddress().getHostAddress());
+        System.out.println("A new client has connected");
+        System.out.println("New Client ID: " + client.getId());
 
         //System.out.println(client);
         //System.out.println(client.getId());
 
         client.getInfo("");
+        System.out.println("Sending Map objects to client...");
 
         String platformString;
         for (Platform platform : platforms) {
@@ -71,6 +73,7 @@ public class GameServer extends AbstractServer {
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("\tAll platforms sent...");
 
         String spikeString;
         for (Obstacle spike : spikes) {
@@ -82,17 +85,21 @@ public class GameServer extends AbstractServer {
             }
         }
 
+        System.out.println("\tAll spikes sent...");
         String collectibleString;
         for (Collectible collectible : collectibles) {
             collectibleString = collectible.toString();
             try {
-                System.out.println("Sending collectible to client: " + collectibleString);
+                //System.out.println("Sending collectible to client: " + collectibleString);
                 client.sendToClient(collectibleString);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
+        System.out.println("\tAll collectibles sent.");
+
+        System.out.println("Successfully sent initializing data to client.");
         //send a message to the client to let it know that we are done sending the initial setup information
         try {
             client.sendToClient("Initialization done");
@@ -131,7 +138,7 @@ public class GameServer extends AbstractServer {
 
         if (msg.equals("I'm done")){
             sendToAllClients("Player disconnected");
-            System.out.println("RIP player");
+            System.out.println("Client " + client.getId() + " disconnected.");
         }
 
         if (msg instanceof String) {
@@ -443,11 +450,11 @@ public class GameServer extends AbstractServer {
                 if(!hasSpikes && collectibleDecider == 0){
                     collectibleType = random.nextInt(10);
                     if(collectibleType % 2 == 0) {
-                        System.out.println("boost collectible");
+                        //System.out.println("boost collectible");
                         collectibles.add(new BoostCollectible(currPlatformXPos + 15, rowPos - 32));
                     }
                     else{
-                        System.out.println("freeze collectible");
+                        //System.out.println("freeze collectible");
                         collectibles.add(new FreezeCollectible(currPlatformXPos + 15, rowPos - 32));
                     }
                 }
@@ -481,10 +488,9 @@ public class GameServer extends AbstractServer {
 
         platforms.add(lastPlatform);
 
-        System.out.println("Server generated collectibles: " + collectibles);
-        System.out.println("Server generated platforms: " + platforms);
-        System.out.println("Number of platforms: " + platforms.size());
-        System.out.println("Server generated spikes: " + spikes);
+        System.out.println("Generated collectibles...");
+        System.out.println("Generated platforms...");
+        System.out.println("Generated spikes...");
     }
 
 
@@ -562,14 +568,43 @@ public class GameServer extends AbstractServer {
     }
 
         //---------------------main--------------------------------------------------
+    public static void printServerBanner()
+    {
+
+     String firstLine    = "     _    ____   ____ _____ _   _ ____  ";
+     String secondLine   = "    / \\  / ___| / ___| ____| \\ | |  _ \\ ";
+     String thirdLine    = "   / _ \\ \\___ \\| |   |  _| |  \\| | | | |";
+     String fourthLine   = "  / ___ \\ ___) | |___| |___| |\\  | |_| |";
+     String fifthLine    = " /_/   \\_\\____/ \\____|_____|_| \\_|____/ ";
+     String sixthLine    = "";
+     String subTitleLine = "             Server Program";
+
+     String startOfLines = "\t\t\t";
+
+     ArrayList<String> banner = new ArrayList<>(List.of(firstLine, secondLine, thirdLine, fourthLine, fifthLine, sixthLine, subTitleLine));
+
+
+     for(int i = 0; i < 7; i++){
+         System.out.println(banner.get(i));
+     }
+
+     System.out.println();
+     System.out.println();
+
+    }
+
     public static void main(String[] args) {
         int port = 12345; // Change port as needed
+
+        printServerBanner();
+
         GameServer server = new GameServer(port);
 
 
         //create the database instance
         Database database = new Database();
         server.setDatabase(database);
+
 
 
         try {
