@@ -12,10 +12,10 @@ public class HostOrJoinGamePanel extends JPanel {
     private double scaleF = 1.5;
     private BufferedImage background;
 
-    private JButton host;
-    private JButton join;
-    private JButton logout;
-    private JLabel errorLabel;
+    public JButton host;
+    public JButton join;
+    public JButton logout;
+    public JLabel errorLabel;
 
     // constructor
     public HostOrJoinGamePanel(HostOrJoinGameControl hj) throws IOException {
