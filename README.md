@@ -1,5 +1,5 @@
 # ASCEND
- Authors: Channing Andrews, Connor Myers, Markie, Owen Kiilsgard, Fabrice Faustin
+ Authors: Channing Andrews, Connor Myers, Markie Salzwedel, Owen Kiilsgard, Fabrice Faustin
 
 ASCEND is a multi-player game that is inspired by 
 the game 'Doodle Jump'. The game involves multiple players who are racing 
